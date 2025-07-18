@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Republica";
+    src: url("./assets/fonts/Republica-Minor-2.0.woff");
+}
+.republica {
+    font-family: "Republica", sans-serif;
+}
+body{
+    font-family: "Comic Relief", sans-serif;
+    
+    font-style: normal;                                               
+}
+
+.block1{
+    background-image: url('./assets/transitionBlocks/bg1.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.block2{
+    background-image: url('./assets/transitionBlocks/bg2.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.block3{
+    background-image: url('./assets/transitionBlocks/bg3.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block4{
+    background-image: url('./assets/transitionBlocks/bg4.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block5{
+    background-image: url('./assets/transitionBlocks/bg5.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block6{
+    background-image: url('./assets/transitionBlocks/bg6.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block7{
+    background-image: url('./assets/transitionBlocks/bg7.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block8{
+    background-image: url('./assets/transitionBlocks/bg8.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block9{
+    background-image: url('./assets/transitionBlocks/bg9.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.block10{
+    background-image: url('./assets/transitionBlocks/bg10.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  padding: 0%;
+}
