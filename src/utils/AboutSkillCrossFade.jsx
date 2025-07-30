@@ -24,7 +24,7 @@ const AboutSkillCrossFade = () => {
     <div ref={containerRef} className="h-[445vh] max-tablet:h-[220vh] flex flex-col max-tablet:justify-between relative">
       
       <motion.div
-      style={{ opacity: firstOpacity }} className='sticky  top-[-75px]' >
+      style={{ opacity: firstOpacity }} className='absolute w-full z-10 top-[75px]' >
         <AboutMe></AboutMe>
         <div className='h-100px w-full bg-black'></div>
       </motion.div>
