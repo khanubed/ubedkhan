@@ -109,7 +109,7 @@ const AboutMe = () => {
         useTransform(scrollYProgress, [0, 1], [0, 1])
     );
     const paraXs = paraScrolls.map(({ scrollYProgress }) =>
-        useTransform(scrollYProgress, [0, 1], [60, 0])
+        useTransform(scrollYProgress, [0, 0.5], [60, 0])
     );
 
     return (<>
@@ -119,7 +119,7 @@ const AboutMe = () => {
                 ref={bubbleRef}
                 src={Bubble}
                 alt="Bubble"
-                className="absolute left-10 top-[20%]  w-[12%] aspect-square m-4 pointer-events-none select-none
+                className="absolute left-10 top-[25%]  w-[12%] aspect-square m-4 pointer-events-none select-none
                             "
                 style={{ x: bubbleX , y: parallaxY }}
             />
@@ -190,7 +190,7 @@ const AboutMe = () => {
                 
                 src={Bubble}
                 alt="Bubble"
-                className="absolute top-5 left-[2%] w-[130px] h-[130px]  m-4 pointer-events-none select-none
+                className="absolute top-[8%] left-[2%] w-[130px] h-[130px]  m-4 pointer-events-none select-none
                             max-phone:h-[100px] max-phone:w-[100px]"
                 
             />
@@ -198,7 +198,7 @@ const AboutMe = () => {
                 
                 src={Dice}
                 alt="Dice"
-                className="absolute top-5 right-[0%]   -rotate-[135] w-[150px] h-[150px] md:w-[200px] md:h-[200px] m-4 pointer-events-none select-none 
+                className="absolute top-[8%] right-[0%]   -rotate-[135] w-[150px] h-[150px] md:w-[200px] md:h-[200px] m-4 pointer-events-none select-none 
                 max-phone:h-[120px] max-phone:w-[120px]"
                 style={{ x: diceX, rotate: diceRotate , y: parallaxY}}
             />
@@ -206,14 +206,14 @@ const AboutMe = () => {
                 
                 src={Heart}
                 alt="Heart"
-                className="absolute bottom-4 left-2 w-[150px] h-[150px] md:w-[210px] md:h-[210px] m-4 pointer-events-none select-none"
+                className="absolute bottom-[7%] left-2 w-[150px] h-[150px] md:w-[210px] md:h-[210px] m-4 pointer-events-none select-none"
                 
             />
             <img
                 
                 src={Diamond}
                 alt="Diamond"
-                className="absolute bottom-5 -right-4 w-[180px] h-[180px] md:w-[250px] md:h-[250px] m-4 pointer-events-none select-none"></img>
+                className="absolute bottom-[8%] -right-4 w-[180px] h-[180px] md:w-[250px] md:h-[250px] m-4 pointer-events-none select-none"></img>
                 
                <div
                 className="w-full flex flex-col items-center justify-center relative  min-h-screen mx-auto max-phone:px-5 px-[100px] text-center bg-transparent rounded-2xl shadow-lg p-8 space-y-6"

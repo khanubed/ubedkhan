@@ -19,8 +19,8 @@ import mongo from '../assets/skillElements/mongo-db.webp'
 
 const SkillsPhone = () => {
   return (
-    <div>
-        <section  className='w-screen h-[100vh] tablet:hidden pt-[0px] relative flex flex-col justify-start  text-white  bg-black'>
+    <div className='absolute bottom-0'>
+        <section  className='w-screen h-[100vh] tablet:hidden pt-[0px]  flex flex-col justify-start  text-white  bg-black'>
       {/* <span className='absolute ' >section start</span> */}
       <div className='w-full absolute -top-[15%] flex justify-between'>
       <div className=''>

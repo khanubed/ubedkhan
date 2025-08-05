@@ -1,9 +1,11 @@
 import React from 'react'
 import FooterBlinker from '../utils/FooterBlinker'
+import { div } from 'framer-motion/client'
 
 const Footer = () => {
   return (
-    <section className='w-screen  h-[70vh] relative z-50 py-4 rounded-t-[4%] bg-black text-white'>
+    <div className='bg-white'>
+    <section className='w-screen  h-auto relative z-10 py-4 rounded-t-[5%] top-0 max-tablet:h-[63vh] bg-black text-white'>
         <div className=' mx-24 max-tablet:mx-5 pt-10 flex justify-between'>
             <div className='republica tracking-wider text-7xl  flex  flex-col max-tablet:text-5xl max-phone:text-4xl'>
                 <span>UBED</span>
@@ -40,7 +42,7 @@ const Footer = () => {
         <div className='bg-black mt-8'>
             <FooterBlinker></FooterBlinker>
         </div>
-    </section>
+    </section></div>
   )
 }
 

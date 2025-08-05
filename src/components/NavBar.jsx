@@ -2,7 +2,7 @@ import React from 'react';
 
 const NavBar = () => {
   return (
-    <nav className="bg-black absolute top-0 left-0 w-full z-50 ">
+    <nav className="bg-black absolute top-0 left-0 w-full z-50 max-tablet:hidden ">
       <div className=" mx-auto  py-4 w-full flex justify-between items-center">        
         <div className="w-full flex justify-evenly  text-sm font-semibold">
           {['Home', 'About', 'Projects', 'Contact'].map((item) => (
