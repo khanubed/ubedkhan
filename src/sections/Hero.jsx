@@ -22,14 +22,10 @@ const Hero = () => {
       <div id='hero' className="bg-black text-white relative min-h-screen flex flex-col items-center">
       
       {/* ----------------HEADING ---------------------*/}
-      <div className="absolute max-tablet:top-[2%]  top-0 w-full flex justify-center select-none
-      max-phone:top-[6%]">        
-      <h1 className="text-[140px] flex md:gap-8
-                     max-tablet:flex-col max-tablet:gap-6 max-tablet:text-[100px] 2xl:text-[170px]
-                     max-phone:text-[80px] 
-
-                     republica mt-5 tracking-wide font-bold text-center  bg-gradient-to-b  from-gray-500 to-white bg-clip-text text-transparent">
-        <span>HI, I'M </span><span className='max-tablet:-mt-12 max-sm:tracking-widest'>UBED</span> 
+      <div className="absolute max-tablet:top-[10%]  top-16 w-full flex justify-center select-none max-phone:top-[10%]">        
+      <h1 className="text-[140px] flex md:gap-8 leading-none
+                     max-tablet:flex-col max-tablet:gap-6 max-tablet:text-[100px] 2xl:text-[170px] max-phone:text-[80px] republica mt-5 tracking-wide font-bold text-center bg-gradient-to-b  from-gray-500 to-white bg-clip-text text-transparent">
+      UBED KHAN
       </h1>
       </div>
       {/* ----------------CENTER CONTENT--------------- */}

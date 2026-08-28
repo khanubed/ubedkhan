@@ -1,62 +1,116 @@
-import React from 'react'
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
-import { motion, useScroll, useTransform } from 'framer-motion'
-const ScrollSlider = () => {
-  const { scrollYProgress } = useScroll();
-  const a = useTransform(scrollYProgress, [0, 1], ['0%', '-40%']);
-  const b = useTransform(scrollYProgress, [0, 1], ['-160%', '-40%']);
-  const items = Array.from({ length: 16 });
-  return (<>
-  {/* -------- DESKTOP---------------- */}
-    <div className="h-[50vh] w-[200vw] bg-black flex flex-col justify-between max-tablet:hidden whitespace-nowrap scrollbar-hide">
-      <div className="h-[15vh]  absolute z-20 -left-20  rotate-0 republica w- z-60  bg-white text-black text-7xl">
-        <motion.div
-          className="h-full w-auto  gap-2 flex-nowrap items-center flex"
-          style={{ x: a }}
-        >
-          {items.map((_, i) => (
-            <span key={`row2-${i}`}>PROJECTS | </span>
-          ))}          
-        </motion.div>
-      </div>
-      <div className="h-[15vh] -rotate-12 -top-20 absolute republica -left-12 bg-white text-black text-7xl z-10 w-full">
-        <motion.div
-          className="h-full  w-auto gap-2 flex-nowrap items-center flex"
-          style={{ x: b }}
-        >
-          {items.map((_, i) => (
-            <span key={`row2-${i}`}>PROJECTS | </span>
-          ))}       
-        </motion.div>
-      </div>      
-    </div>
-  {/* -------- PHONE  ---------------- */}
-    <div className="h-[50vh] w-[200vw] bg-black flex flex-col justify-between tablet:hidden whitespace-nowrap scrollbar-hide">
-      <div className="h-[15vh]  absolute z-20 -left-20  rotate-0 republica w- z-60  bg-white text-black text-7xl">
-        <motion.div
-          className="h-full w-auto  gap-2 flex-nowrap items-center flex"
-          animate={{ x: ['0%', '-20%'] }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-        >
-          {items.map((_, i) => (
-            <span key={`row2-${i}`}>PROJECTS | </span>
-          ))}          
-        </motion.div>
-      </div>
-      <div className="h-[15vh] -rotate-12 -top-20 absolute republica -left-12 bg-white text-black text-7xl z-10 w-full">
-        <motion.div
-          className="h-full  w-auto gap-2 flex-nowrap items-center flex"
-          animate={{ x: ['-100%', '0%'] }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        >
-          {items.map((_, i) => (
-            <span key={`row2-${i}`}>PROJECTS | </span>
-          ))}       
-        </motion.div>
-      </div>      
-    </div>
-    </>
-  )
-}
+const items = Array.from({ length: 12 });
 
-export default ScrollSlider
+const ProjectHead = () => {
+  const containerRef = useRef(null);
+  const row1Ref = useRef(null);
+  const row2Ref = useRef(null);
+
+  useGSAP(
+    () => {
+      // Row 1 moves leftward (0% to -50%)
+      const row1Tween = gsap.to(row1Ref.current, {
+        xPercent: -50,
+        ease: 'none',
+        duration: 22,
+        repeat: -1,
+      });
+
+      // Row 2 moves rightward (-50% to 0%)
+      gsap.set(row2Ref.current, { xPercent: -50 });
+      const row2Tween = gsap.to(row2Ref.current, {
+        xPercent: 0,
+        ease: 'none',
+        duration: 22,
+        repeat: -1,
+      });
+
+      // Scroll velocity acceleration boost
+      let lastScrollY = window.scrollY;
+      let scrollTimeout = null;
+
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+        const delta = Math.abs(currentScrollY - lastScrollY);
+        lastScrollY = currentScrollY;
+
+        const boost = Math.min(delta * 0.12, 6);
+        const targetMultiplier = 1 + boost;
+
+        gsap.to([row1Tween, row2Tween], {
+          timeScale: targetMultiplier,
+          duration: 0.1,
+          overwrite: 'auto',
+        });
+
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          gsap.to([row1Tween, row2Tween], {
+            timeScale: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        }, 100);
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+      };
+    },
+    { scope: containerRef }
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full overflow-hidden bg-black py-4 flex flex-col justify-center gap-1 select-none pointer-events-none z-10"
+    >
+      {/* Row 1 Banner */}
+      <div className="w-full overflow-hidden bg-white text-black py-2.5 phone:py-3.5 transform -rotate-2 scale-105 shadow-md">
+        <div
+          ref={row1Ref}
+          className="flex w-max flex-nowrap whitespace-nowrap items-center font-bold republica text-3xl phone:text-5xl tablet:text-7xl tracking-wider"
+        >
+          {items.map((_, i) => (
+            <span key={`r1-${i}`} className="mx-3 phone:mx-5">
+              PROJECTS <span className="text-gray-400 font-normal">|</span>
+            </span>
+          ))}
+          {items.map((_, i) => (
+            <span key={`r1-dup-${i}`} className="mx-3 phone:mx-5">
+              PROJECTS <span className="text-gray-400 font-normal">|</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Row 2 Banner (Opposite direction & angle) */}
+      <div className="w-full overflow-hidden bg-white text-black py-2.5 phone:py-3.5 transform rotate-2 scale-105 shadow-md -mt-2">
+        <div
+          ref={row2Ref}
+          className="flex w-max flex-nowrap whitespace-nowrap items-center font-bold republica text-3xl phone:text-5xl tablet:text-7xl tracking-wider"
+        >
+          {items.map((_, i) => (
+            <span key={`r2-${i}`} className="mx-3 phone:mx-5">
+              PROJECTS <span className="text-gray-400 font-normal">|</span>
+            </span>
+          ))}
+          {items.map((_, i) => (
+            <span key={`r2-dup-${i}`} className="mx-3 phone:mx-5">
+              PROJECTS <span className="text-gray-400 font-normal">|</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectHead;

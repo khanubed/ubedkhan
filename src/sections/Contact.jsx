@@ -1,121 +1,151 @@
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ContactForm from '../components/ContactForm';
 
-import React from 'react'
-import ContactForm from '../components/ContactForm'
-import { useRef } from 'react';
-import { motion, useAnimation } from "framer-motion";
-import { useScroll, useTransform } from "framer-motion";
-import spiral from "../assets/elements/spiral.webp"
-import hologram from "../assets/elements/hologram.webp"
+import spiral from '../assets/elements/spiral.webp';
+import hologram from '../assets/elements/hologram.webp';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
+  const parentRef = useRef(null);
+  const spiralRef = useRef(null);
+  const hologramRef = useRef(null);
+  const maskRef = useRef(null);
 
-    const parentRef = useRef(null);
+  useGSAP(
+    () => {
+      // 1. Scroll-driven mask reveal (unmask text from right to left on scroll)
+      gsap.fromTo(
+        maskRef.current,
+        { width: '100%' },
+        {
+          width: '0%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: parentRef.current,
+            start: 'top 70%',
+            end: 'top 25%',
+            scrub: 0.5,
+          },
+        }
+      );
 
-    {/* Graphics elements */}
-    const spiralRef = useRef(null);
-      const { scrollYProgress: spiralScrollY } = useScroll({
-          target: parentRef,
-          offset: ["start 60%", "start 25%"]
+      // 2. Spiral Parallax
+      gsap.fromTo(
+        spiralRef.current,
+        { x: -200, opacity: 0 },
+        {
+          x: 15,
+          opacity: 1,
+          scrollTrigger: {
+            trigger: parentRef.current,
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: 1,
+          },
+        }
+      );
+
+      // 3. Hologram Parallax & Rotation
+      gsap.fromTo(
+        hologramRef.current,
+        { x: 300, rotate: 0, opacity: 0 },
+        {
+          x: 0,
+          rotate: 180,
+          opacity: 1,
+          scrollTrigger: {
+            trigger: parentRef.current,
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: 1,
+          },
+        }
+      );
+
+      // Continuous gentle bobbing for side elements
+      gsap.to(spiralRef.current, {
+        y: 10,
+        duration: 3.5,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
       });
-      const spiralX = useTransform(spiralScrollY, [0, 1], [-200, 15]);
-
-    const hologramRef = useRef(null);
-      const { scrollYProgress: hologramScrollY } = useScroll({
-          target: parentRef,
-          offset: ["start 60%", "start start"]
+      gsap.to(hologramRef.current, {
+        y: -12,
+        duration: 4,
+        yoyo: true,
+        repeat: -1,
+        ease: 'sine.inOut',
       });
-      const hologramX = useTransform(hologramScrollY, [0, 1], [450, 0]);
-      const hologramRotate = useTransform(hologramScrollY, [0, 1], [0, 180]);
-
-    {/* TEXT REVEAL */ }
-    
-    const { scrollYProgress : textScrollY } = useScroll({
-    target: parentRef,
-    offset: ['start 60% ', 'start 25%'],
-  });
-
-  // Slide in the mask from right to left
-  const maskX = useTransform(textScrollY, [0, 1], ['100%', '0%']);
-
-      //  const parallaxRef = useRef(null);
-      const { scrollYProgress: parallaxScroll } = useScroll({
-        target: parentRef ,
-        offset: ['start end', 'end start'],
-    });
-      const parallaxY = useTransform(parallaxScroll, [0, 1], [0, -100 * (1.2)]);
-    
-
-    // RANDOM REPEL EFFECT 
-    const getRandomRepel = () => {
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = 15 + Math.random() * 15; // 15px to 30px (less movement)
-        return {
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance,
-        };
-    };  
+    },
+    { scope: parentRef }
+  );
 
   return (
-    <>    
-    <section id='contact' ref={parentRef} className='h-[95vh]  relative bg-white w-screen'>
+    <section
+      id="contact"
+      ref={parentRef}
+      className="relative w-screen min-h-screen bg-white text-black overflow-hidden flex flex-col justify-center items-center py-16 px-4 phone:px-8"
+    >
+      {/* Graphic Elements */}
+      {/* Spiral (Left Side) */}
+      <img
+        ref={spiralRef}
+        src={spiral}
+        alt="spiral"
+        className="absolute left-[2%] phone:left-[4%] top-[25%] tablet:top-[30%] w-[120px] phone:w-[180px] tablet:w-[240px] pointer-events-none select-none z-10 opacity-90"
+      />
 
-        {/* Graphics elements */}
-        <div className='relative  top-[23%] max-tablet:hidden' >
-              <motion.img
-                              ref={spiralRef}
-                              src={spiral}
-                              alt="spiral"
-                              transition={{ duration: 0.6, ease: "easeOut" }}
+      {/* Hologram (Right Side) */}
+      <img
+        ref={hologramRef}
+        src={hologram}
+        alt="hologram"
+        className="absolute right-[2%] phone:right-[4%] top-[10%] tablet:top-[15%] w-[120px] phone:w-[180px] tablet:w-[240px] pointer-events-none select-none z-10 opacity-90"
+      />
 
-                              className="absolute z-50 opacity-100  left-50 w-[200px] h-[200px] md:w-[250px] md:h-[250px] m-4 pointer-events-none select-none"
-                              style={{ x: spiralX , y: parallaxY }}
-                          /></div>
-        <div className='relative left-0 top-[72%] bottom-4 z-50 tablet:hidden' >
-              <motion.img     src={spiral}                         
-                              alt="spiral"
-                              className="absolute z-50 opacity-100  left-50 w-[200px] h-[200px] md:w-[250px] md:h-[250px] m-4 pointer-events-none select-none max-phone:w-[150px] max-phone:h-[150px]"
-                          /></div>
-        <div className='relative  top-[10%]  max-tablet:hidden'>
-              <motion.img
-                              ref={hologramRef}
-                              src={hologram}
-                              alt="hologram"
-                              transition={{ duration: 0.6, ease: "easeOut"  }}
-                              className="absolute opacity-100  right-10 w-[200px] h-[200px] md:w-[250px] md:h-[250px] m-4 pointer-events-none select-none"
-                              style={{ x: hologramX , y: parallaxY , rotate: hologramRotate }}
-                          /></div>
-        <div className='relative  top-[10%] tablet:hidden'>
-              <motion.img
-                              
-                              src={hologram}
-                              alt="hologram"
-                              transition={{ duration: 0.6, ease: "easeOut"  }}
-                              className="absolute opacity-100  right-2 w-[200px]  h-[200px] md:w-[250px] md:h-[250px] max-phone:w-[150px] max-phone:h-[150px] m-4 pointer-events-none select-none"
-                          /></div>
+      {/* Center Layout Container */}
+      <div className="w-full max-w-6xl mx-auto flex flex-col tablet:flex-row items-center justify-center gap-8 tablet:gap-14 my-auto z-20">
+        {/* Left Side: Scroll-Masked Text Reveal */}
+        <div className="relative overflow-hidden flex flex-col justify-center items-center tablet:items-end p-2 min-h-[220px] phone:min-h-[300px] tablet:min-h-[360px] w-full tablet:w-1/2">
+          {/* Unmasking White Overlay */}
+          <div
+            ref={maskRef}
+            className="absolute top-0 right-0 bottom-0 bg-white z-20 pointer-events-none"
+          />
 
-        {/* CENTER CONTENT */}
-
-
-        <div className='h-[95vh] w-screen flex  justify-center items-center'>
-            <div className='w-full h-[600px] items-center  flex gap-8 justify-center max-tablet:flex-col max-tablet:gap-[-5px]'>
-                <div className='flex px-1 items-center justify-center relative overflow-hidden h-[500px] w-[500px]  max-w-[500px] '>
-                    <motion.div className=' bg-white absolute max-tablet:hidden right-0 z-10 h-[50dvh] w-full max-w-[500px]'
-                    style={{ width: maskX }}></motion.div>
-                    <div className='flex flex-col  absolute  right-0 gap-6 h-[50dvh] w-full justify-center items-end max-tablet:pl-[10%] max-tablet:pr-[-10%]  max-tablet:items-start max-phone:pl-[15%] max-tablet:gap-3'>                    
-                        <span className='republica text-5xl max-phone:text-3xl'>LET'S BUILD</span>
-                        <span className='republica text-5xl max-phone:text-3xl'>SOMETHING</span>
-                        <span className='republica text-5xl max-phone:text-3xl'>COOL TOGETHER</span>
-                        <span className=' text-3xl max-phone:text-xl'>ubedkhan7529@gmail.com</span>
-                    </div>
-                </div>
-                <div className='flex justify-center relative max-phone:top-[-12%] items-center'>
-                        <ContactForm></ContactForm>
-                </div>  
-            </div>
+          <div className="flex flex-col gap-2 phone:gap-4 text-center tablet:text-right items-center tablet:items-end w-full z-10">
+            <span className="republica text-3xl phone:text-5xl tablet:text-6xl text-black font-bold tracking-wider leading-tight">
+              LET'S BUILD
+            </span>
+            <span className="republica text-3xl phone:text-5xl tablet:text-6xl text-black font-bold tracking-wider leading-tight">
+              SOMETHING
+            </span>
+            <span className="republica text-3xl phone:text-5xl tablet:text-6xl text-indigo-600 hover:text-indigo-500 xt-black font-bold tracking-wider leading-tight">
+              COOL TOGETHER
+            </span>
+            <a
+              href="mailto:ubedkhan7529@gmail.com"
+              className="text-lg phone:text-2xl tablet:text-3xl font-medium text-gray-800 hover:text-indigo-600 transition-colors mt-2 underline underline-offset-4"
+            >
+              ubedkhan7529@gmail.com
+            </a>
+          </div>
         </div>
-    </section>
-    </>
-  )
-}
 
-export default Contact
+        {/* Right Side: Contact Form Container */}
+        <div className="w-full tablet:w-1/2 max-w-md">
+          <div className="p-6 phone:p-8 ">
+            <ContactForm />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Contact;

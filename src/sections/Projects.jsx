@@ -1,358 +1,208 @@
-import React, { useRef } from 'react'
-import ProjectHead from '../components/ProjectHead'
-import { color, useScroll , useTransform } from 'framer-motion';
-import { motion } from 'framer-motion';
-import chatify from '../assets/projectImages/login.webp'
-import weather from '../assets/projectImages/weather.webp'
-import linkly from '../assets/projectImages/linkly.webp'
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { projectsData } from '../data/projectsData';
+import ProjectHead from '../components/ProjectHead';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Projects = () => {
-  const parentRef =  useRef(null);
-  
-      const { scrollYProgress: card1ScrollY } = useScroll({
-          target: parentRef,
-          offset: ["0% end", "0% start"]
-      });
-      const card1Scale = useTransform(card1ScrollY, [0, 1], [1.2, 1]);
-      const card1Y = useTransform(card1ScrollY, [0, 1], [700, 20]);
+  const parentRef = useRef(null);
+  const containerRef = useRef(null);
 
-      const { scrollYProgress: card2ScrollY } = useScroll({
-          target: parentRef,
-          offset: ["50% end", "50% 10%"]
-      });
-      const card2Scale = useTransform(card2ScrollY, [0, 1], [1.22, 1.02]);
-      const card2Y = useTransform(card2ScrollY, [0, 1], [700, 20]);
-      
-       const getRandomRepel = () => {
-      const angle = Math.random() * 2 * Math.PI;
-      const distance = 15 + Math.random() * 15; // 15px to 30px (less movement)
-      return {
-      x: Math.cos(angle) * distance,
-      y: Math.sin(angle) * distance,
-      };
-      };
+  useGSAP(
+    () => {
+      const cards = gsap.utils.toArray('.project-card');
+      const totalCards = cards.length;
 
+      if (totalCards === 0) return;
+
+      // Force 3D transform hardware acceleration to prevent repainting flicker
+      gsap.set(cards, { force3D: true, transformOrigin: 'center center' });
+
+      // Extended scroll distance (220% per card) for comfortable reading pace
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: parentRef.current,
+          start: 'top top',
+          end: `+=${totalCards * 220}%`,
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+        },
+      });
+
+      cards.forEach((card, index) => {
+        if (index === 0) {
+          // First base card stays visible initially, then holds
+          tl.to({}, { duration: 1.5 }, 'card-0-hold');
+          return;
+        }
+
+        const prevCards = cards.slice(0, index);
+
+        // Previous cards scale down & fade smoothly without heavy brightness filter repaints
+        tl.to(
+          prevCards,
+          {
+            scale: (i) => 1 - (index - i) * 0.04,
+            y: (i) => -(index - i) * 16,
+            opacity: (i) => Math.max(0.35, 1 - (index - i) * 0.25),
+            duration: 1,
+            ease: 'power2.out',
+            force3D: true,
+          },
+          `card-${index}`
+        );
+
+        // Incoming card slides up smoothly
+        tl.fromTo(
+          card,
+          {
+            y: '100vh',
+            opacity: 0,
+            scale: 1.02,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'power2.out',
+            force3D: true,
+          },
+          `card-${index}`
+        );
+
+        // Dedicated HOLD phase for each slide so user has time to view/read
+        tl.to({}, { duration: 1.5 }, `card-${index}-hold`);
+      });
+    },
+    { scope: parentRef }
+  );
 
   return (
-    <>
-    <div className='z-20'>   
-    <section id='projects' className='z-20 mt-[-25px] max-tablet:mt-0 text-white bg-black w-full h-[210vh]  rounded-b-[4%] relative'>
-        <div className='rotate-12  sticky z-20 top-[20px] mb-60'>
-        <ProjectHead className='sticky top-16'></ProjectHead>
-        </div>
-    
-        <div ref={parentRef} className='bg-black absolute  flex flex-col  items-center justify-between gap-10 w-full top-16 h-[180vh] max-tablet:h-auto'>
-          
-          
-          <motion.div
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className='h-[65vh] top-[16vh]  bg-black z-30 sticky w-[75vw] mb-16 border-2  rounded-3xl max-tablet:hidden'
-            style={{ scale: card1Scale , y: card1Y }}>
-              <div className='h-full w-full'>
-              <div className="flex p-6 pb-0  items-end">
-                <div className='flex h-15dvh justify-between px-7 w-full items-end '> {/*TOP*/}
-                  <div className='flex gap-5 items-end  max-tablet:flex-col max-tablet:items-start max-tablet:gap-0 '>
-                    <span className='republica text-3xl max-tablet:text-2xl'>Linkly</span>
-                    <span className='text-lg max-tablet:text-sm'> URL Shortner App</span>
-                  </div>
-                  <div className='flex gap-4'>
-                  <a href="https://github.com/khanubed/Linkly" className='px-5 py-1 align-middle rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all flex flex-row items-center gap-2'>
-                            <img src="https://img.icons8.com/ios-glyphs/30/FFFFFF/github.png" className=' h-6' alt="" /> Github
-                          </a>
-                  <motion.a
-                          href="https://linkly-phi.vercel.app/"
-                          className="px-5 py-1 flex items-center justify-center rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none   transition-all"
-                          style={{
-                          background: "linear-gradient(30deg, #000000 , #ec4899, #6366f1, #f59e42)",
-                          }}
-                          whileHover={() => {
-                          const { x, y } = getRandomRepel();
-                          const rotate = (Math.random() - 0.5) * 25; // -8deg to 8deg
-                          const scale = 1.04 + Math.random() * 0.03; // 1.04 to 1.07
-                          return {x,y,rotate,scale,
-                          transition: {
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.25,},};}}
-                          transition={{
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.05,
-                          }}>LIVE VERSION</motion.a>                          
-                  </div>
-                </div>
-              </div>
-              {/* <hr  className='w-full' /> */}
-              <div className='h-[50dvh] my-4 justify-between flex flex-row px-8  w-full'> 
-                <div className='w-[60%] text-wrap  flex text-md flex-col justify-evenly'>
-                  <span className='align-middle text-wrap '>
-                  Linkly is a full-stack URL shortener and analytics platform built with the MERN stack. It enables users to create short links, track real-time click analytics, and manage URLs through a secure dashboard. The application uses JWT-based authentication, Context API for state management, and a subscription model integrated with Razorpay.
-                  <br/></span>
-                   <span className=''>
-                  Key Features : 
-                  <ul className='list-disc px-4'>
-                    <li>🔗 URL shortening and redirection</li>
-                    <li>📊 Real-time click analytics</li>
-                    <li>🔐 JWT-based authentication</li>
-                    <li>💳 Subscription-based access with Razorpay</li>
-                    <li>🛠️ Admin dashboard for management</li>
-                    </ul>  </span>             
-                </div> 
-                          
+    <section
+      id="projects"
+      ref={parentRef}
+      className="relative w-screen min-h-screen bg-black text-white overflow-hidden flex flex-col justify-between pt-14 pb-8"
+    >
+      {/* Header Marquee Banner */}
+      <div className="w-full relative z-10 -mt-2">
+        <ProjectHead />
+      </div>
 
-                <div className='w-[35%] flex flex-col justify-evenly  h-full'>
-                  <div className='h-[48%] w-[100%] aspect-square rounded-lg overflow-hidden border-2 border-gray-400 flex items-center justify-center' ><img src={linkly}  className='-mt-7' alt="" /></div>
-                  <div className='h-auto w-[100%]  border-2 bg-slate-500 bg-opacity-10 border-gray-400 border-opacity-50 rounded-lg '>
-                    <span className='p-2 flex flex-wrap gap-2 text-[10px] items-center h-full'>
-                      <span className='px-2  rounded-sm gap-2   bg-gray-200 bg-opacity-20'>React</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Tailwind CSS</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Node.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Express.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>MongoDB</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Razorpay</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Shadcn</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>JWT</span>
-                    </span>
-                     </div>
-                </div>
-
-              </div>
-            </div>
-          </motion.div>
-          <motion.div
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          style={{ scale: card2Scale , y: card2Y }}
-           className='h-[65vh] top-[24vh] bg-black z-50 sticky w-[75vw] border-2 rounded-3xl  max-tablet:hidden'>
-            <div className='h-full w-full'>
-              <div className="flex p-6 pb-0">
-                <div className='flex h-15dvh justify-between px-7 w-full  '>
-                  <div className='flex gap-5 items-end max-tablet:flex-col max-tablet:items-start max-tablet:gap-0'>
-                    <span className='republica text-3xl'>Chatify</span>
-                    <span className='text-lg'>Real-Time Chat App</span>
-                  </div>
-                  <div className='flex gap-4'>
-                  <a href="https://github.com/khanubed/Chatify" className='px-5 py-1 align-middle rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all flex flex-row items-center gap-2'>
-                            <img src="https://img.icons8.com/ios-glyphs/30/FFFFFF/github.png" className=' h-6' alt="" /> Github
-                          </a>
-                  <motion.a
-                          href="https://chatify-three.vercel.app/"
-                          className="px-5 py-1 flex items-center justify-center rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all"
-                          style={{
-                          background: "linear-gradient(30deg, #000000 , #ec4899, #6366f1, #f59e42)",
-                          }}
-                          whileHover={() => {
-                          const { x, y } = getRandomRepel();
-                          const rotate = (Math.random() - 0.5) * 25; // -8deg to 8deg
-                          const scale = 1.04 + Math.random() * 0.03; // 1.04 to 1.07
-                          return {x,y,rotate,scale,
-                          transition: {
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.25,},};}}
-                          transition={{
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.05,
-                          }}>LIVE VERSION</motion.a>                          
-                  </div>
-                </div>
-              </div>
-              <div className='h-[50dvh] my-4 justify-between flex flex-row px-8  w-full'> 
-                <div className='w-[60%] text-wrap  flex text-md flex-col justify-evenly'>
-                  <span className='align-middle text-wrap '>
-                  Chatify is a full-stack real-time chat application built with the MERN stack and Socket.io. It features secure JWT-based user authentication, real-time one-on-one messaging, profile editing, and image sharing via Cloudinary. The frontend is developed using React.js and styled with Tailwind CSS, while the backend is powered by Node.js, Express.js, and MongoDB.
-                   <br/></span>
-                   <span className=''>
-                  Key Features : 
-                  <ul className='list-disc px-4'>
-                    <li>Real-time messaging with Socket.io</li>
-                    <li>User login/signup with JWT authentication</li>
-                    <li>Edit profile (username & profile picture)</li>
-                    <li>Image upload in chat via Cloudinary</li>
-                    <li>Responsive UI with Tailwind CSS</li>
-                    </ul>  </span>             
-                </div> 
-                          
-
-                <div className='w-[35%] flex flex-col justify-evenly  h-full'>
-                  <div className='h-[48%] w-[100%] rounded-lg overflow-hidden border-2 aspect-square border-gray-500' ><img src={chatify}  className='' alt="" /></div>
-                  <div className='h-auto w-[100%]  border-2 bg-slate-500 bg-opacity-10 border-gray-400 border-opacity- bg-gray-900-90 rounded-lg '>
-                    <span className='p-2 flex flex-wrap gap-2  items-center h-full text-[10px]'>
-                      <span className='px-2  rounded-sm gap-2   bg-gray-200 bg-opacity-20'>React</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Tailwind CSS</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Node.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Express.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>MongoDB</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Socket.io</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Cloudinary</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>JWT</span>
-                    </span>
-                     </div>
-                </div>
-
-              </div>
-            </div>
-          </motion.div>
+      {/* Cards Deck Container - Clean relative layout */}
+      <div
+        ref={containerRef}
+        className="relative -top-32 w-full max-w-6xl mx-auto h-[78vh] phone:h-[80vh] tablet:h-[76vh] flex items-center justify-center px-4 z-20"
+      >
+        {projectsData.map((project, index) => (
           <div
-          transition={{ duration: 0.6, ease: "easeOut" }}
-           className='h-auto relative top-[10vh] bg-black z-50  w-[90vw] border-2 rounded-3xl tablet:hidden tablet:pb-10 '>
-            <div className='h-full w-full pb-4'>
-              <div className="flex pt-4 pb-0">
-                <div className='flex h-15dvh justify-between px-5 w-full  '>
-                  <div className='flex gap-5 h-full items-end justify-evenly max-tablet:flex-col max-tablet:items-start max-tablet:gap-0'>
-                    <span className='republica text-3xl'>Chatify</span>
-                    <span className='text-lg'>Real-Time Chat App</span>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                  <a href="https://github.com/khanubed/Chatify" className='px-5 py-1 align-middle rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all flex flex-row items-center gap-2'>
-                            <img src="https://img.icons8.com/ios-glyphs/30/FFFFFF/github.png" className=' h-6' alt="" /> Github
-                          </a>
-                  <motion.a
-                          href="https://chatify-three.vercel.app/"
-                          className="px-5 py-2 flex items-center justify-center rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all"
-                          style={{
-                          background: "linear-gradient(30deg, #000000 , #ec4899, #6366f1, #f59e42)",
-                          }}
-                          whileHover={() => {
-                          const { x, y } = getRandomRepel();
-                          const rotate = (Math.random() - 0.5) * 25; // -8deg to 8deg
-                          const scale = 1.04 + Math.random() * 0.03; // 1.04 to 1.07
-                          return {x,y,rotate,scale,
-                          transition: {
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.25,},};}}
-                          transition={{
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.05,
-                          }}>LIVE VERSION</motion.a>                          
-                  </div>
+            key={project.id || index}
+            className="project-card absolute inset-x-4 phone:inset-x-6 mx-auto top-2 bottom-2 flex flex-col justify-between bg-zinc-950 border border-white/15 rounded-3xl p-5 phone:p-7 tablet:p-8 shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden will-change-transform"
+            style={{ zIndex: index + 1 }}
+          >
+            {/* Header: Title, Subtitle & Action Links */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-3">
+                  <h3 className="republica text-2xl phone:text-3xl tablet:text-4xl text-white tracking-wide">
+                    {project.title}
+                  </h3>
+                  <span className="text-xs phone:text-sm text-gray-400 font-light">
+                    {project.subtitle}
+                  </span>
                 </div>
               </div>
-              <div className='h-auto mt-8 justify-between gap-2 flex flex-col-reverse px-8  w-full'> 
-                <div className='w-full text-wrap text-sm flex text-md flex-col justify-evenly'>
-                  <span className='align-middle text-wrap '>
-                  Chatify is a full-stack real-time chat application built with the MERN stack and Socket.io. It features secure JWT-based user authentication, real-time one-on-one messaging, profile editing, and image sharing via Cloudinary. The frontend is developed using React.js and styled with Tailwind CSS, while the backend is powered by Node.js, Express.js, and MongoDB.
-                   <br/></span>
-                   <span className=''>
-                  Key Features : 
-                  <ul className='list-disc px-4'>
-                    <li>Real-time messaging with Socket.io</li>
-                    <li>User login/signup with JWT authentication</li>
-                    <li>Edit profile (username & profile picture)</li>
-                    <li>Image upload in chat via Cloudinary</li>
-                    <li>Responsive UI with Tailwind CSS</li>
-                    </ul>  </span>             
-                </div> 
-                          
 
-                <div className='w-full flex flex-col gap-2 justify-evenly  h-full'>
-                  <div className='h-auto w-[100%] rounded-lg overflow-hidden border-2  border-gray-500' ><img src={chatify}  className='h-full w-auto aspect-auto' alt="" /></div>
-                  <div className='h-auto w-[100%]  border-2 bg-slate-500 bg-opacity-10 border-gray-400 border-opacity-50 text-sm bg-gray-900-90 rounded-lg '>
-                    <span className='p-2 flex flex-wrap gap-2  items-center h-full text-[10px]'>
-                      <span className='px-2  rounded-sm gap-2   bg-gray-200 bg-opacity-20'>React</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Tailwind CSS</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Node.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Express.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>MongoDB</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Socket.io</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Cloudinary</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>JWT</span>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
+                {project.github && project.github !== '#' && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-4 py-1.5 flex items-center gap-2 rounded-full border border-white/30 text-xs font-light text-white hover:bg-white/10 transition-colors"
+                  >
+                    <img
+                      src="https://img.icons8.com/ios-glyphs/30/FFFFFF/github.png"
+                      className="h-4 w-4"
+                      alt="GitHub"
+                    />
+                    GitHub
+                  </a>
+                )}
+                {project.live && project.live !== '#' && (
+                  <a
+                    href={project.live}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-5 py-1.5 flex items-center justify-center rounded-full text-xs font-semibold text-white shadow-lg hover:scale-105 transition-all duration-300"
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #ec4899, #6366f1, #f59e42)',
+                    }}
+                  >
+                    LIVE VERSION
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Body: Responsive Grid for Content & Image Preview */}
+            <div className="grid grid-cols-1 tablet:grid-cols-12 gap-6 items-center my-auto overflow-y-auto no-scrollbar py-2">
+              {/* Left Column: Description & Features */}
+              <div className="tablet:col-span-7 flex flex-col justify-center space-y-4">
+                <p className="text-xs phone:text-sm tablet:text-base text-gray-300 leading-relaxed font-light">
+                  {project.description}
+                </p>
+
+                {project.features && project.features.length > 0 && (
+                  <div className="space-y-1.5">
+                    <span className="text-xs phone:text-sm font-semibold text-gray-200">
+                      Key Features:
                     </span>
-                     </div>
+                    <ul className="grid grid-cols-1 gap-1.5 pl-1 text-xs phone:text-sm text-gray-400 font-light">
+                      {project.features.map((feature, fIdx) => (
+                        <li key={fIdx} className="flex items-center gap-2">
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Preview Image & Tech Badges */}
+              <div className="tablet:col-span-5 flex flex-col justify-center space-y-3">
+                <div className="w-full aspect-[16/9] rounded-2xl overflow-hidden border border-white/15 bg-black/60 flex items-center justify-center group">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
 
+                {/* Tech Stack Badges */}
+                <div className="flex flex-wrap gap-1.5 p-2 bg-white/[0.03] border border-white/10 rounded-xl">
+                  {project.tech.map((techItem, tIdx) => (
+                    <span
+                      key={tIdx}
+                      className="px-2.5 py-1 text-[10px] phone:text-xs rounded-md bg-white/10 text-gray-300 font-medium"
+                    >
+                      {techItem}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-          <div
-          transition={{ duration: 0.6, ease: "easeOut" }}
-           className='h-auto relative top-[10vh] bg-black z-50  w-[90vw] border-2 rounded-3xl tablet:hidden'>
-            <div className='h-full w-full pb-4'>
-              <div className="flex pt-4 pb-0">
-                <div className='flex h-15dvh justify-between px-5 w-full  '>
-                  <div className='flex gap-5 h-full items-end justify-evenly max-tablet:flex-col max-tablet:items-start max-tablet:gap-0'>
-                    <span className='republica text-3xl'>Linkly</span>
-                    <span className='text-lg'>URL Shortner App</span>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                  <a href="https://github.com/khanubed/Linkly" className='px-5 py-1 align-middle rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all flex flex-row items-center gap-2'>
-                            <img src="https://img.icons8.com/ios-glyphs/30/FFFFFF/github.png" className=' h-6' alt="" /> Github
-                          </a>
-                  <motion.a
-                          href="https://linkly-phi.vercel.app/"
-                          className="px-5 py-2 flex items-center justify-center rounded-full  border-2 font-thin text-xs text-white shadow-lg hover:shadow-2xl focus:outline-none  transition-all"
-                          style={{
-                          background: "linear-gradient(30deg, #000000 , #ec4899, #6366f1, #f59e42)",
-                          }}
-                          whileHover={() => {
-                          const { x, y } = getRandomRepel();
-                          const rotate = (Math.random() - 0.5) * 25; // -8deg to 8deg
-                          const scale = 1.04 + Math.random() * 0.03; // 1.04 to 1.07
-                          return {x,y,rotate,scale,
-                          transition: {
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.25,},};}}
-                          transition={{
-                          type: "spring",
-                          stiffness: 180,
-                          damping: 12,
-                          duration: 0.05,
-                          }}>LIVE VERSION</motion.a>                          
-                  </div>
-                </div>
-              </div>
-              <div className='h-auto mt-8 justify-between gap-2 flex flex-col-reverse px-8  w-full'> 
-                <div className='w-full text-wrap text-sm flex text-md flex-col justify-evenly'>
-                  <span className='align-middle text-wrap '>
-                    Linkly is a full-stack URL shortener and analytics platform built with the MERN stack. It enables users to create short links, track real-time click analytics, and manage URLs through a secure dashboard. The application uses JWT-based authentication, Context API for state management, and a subscription model integrated with Razorpay.
-                    <br/></span>
-                   <span className=''>
-                  Key Features : 
-                  <ul className='list-disc px-4'>
-                    <li>URL shortening and redirection</li>
-                    <li>Real-time click analytics</li>
-                    <li>JWT-based authenticatio</li>
-                    <li>Subscription-based access with Razorpay</li>
-                    <li>Admin dashboard for management</li>
-                    </ul>  </span>             
-                </div> 
-                          
-
-                <div className='w-full flex flex-col gap-2 justify-evenly  h-full'>
-                  <div className='h-auto w-[100%] rounded-lg overflow-hidden border-2  border-gray-500' ><img src={linkly}  className='h-full w-auto aspect-auto' alt="" /></div>
-                  <div className='h-auto w-[100%]  border-2 bg-slate-500 bg-opacity-10 border-gray-400 border-opacity-50 text-sm bg-gray-900-90 rounded-lg '>
-                    <span className='p-2 flex flex-wrap gap-2  items-center h-full text-[10px]'>
-                      <span className='px-2  rounded-sm gap-2   bg-gray-200 bg-opacity-20'>React</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Tailwind CSS</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Node.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Express.js</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>MongoDB</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Razorpay</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>Shadcn</span>
-                      <span className='px-2 rounded-sm gap-2   bg-gray-200 bg-opacity-20'>JWT</span>
-                    </span>
-                     </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
+        ))}
+      </div>
     </section>
-    </div> 
-    </>
+  );
+};
 
-  )
-}
-
-export default Projects
+export default Projects;
