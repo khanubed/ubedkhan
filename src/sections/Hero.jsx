@@ -18,7 +18,7 @@ const Hero = () => {
   return (
     <div
       id="hero"
-      className="bg-black text-white relative min-h-screen flex flex-col items-center"
+      className="bg-black  text-white relative min-h-screen flex flex-col items-center"
     >
       {/* ----------------HEADING ---------------------*/}
       <div className="absolute max-tablet:top-[10%]  top-16 w-full flex justify-center select-none max-phone:top-[10%]">
@@ -83,9 +83,9 @@ const Hero = () => {
 
       {/* BITMOJI CENTER */}
       <div
-        className="absolute w-full flex justify-center top-[10%] transform 
-                      max-tablet:top-[18%] max-tablet:z-50 
-                      max-phone:rotate-2 max-phone:top-[22%]"
+        className="absolute w-full flex justify-center top-[18%] transform 
+                      max-tablet:top-[28%] max-tablet:z-50 
+                      max-phone:rotate-2 max-phone:top-[29%]"
       >
         <motion.img
           src={bitmoji}
