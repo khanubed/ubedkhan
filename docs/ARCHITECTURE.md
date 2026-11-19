@@ -1,182 +1,159 @@
-# Architecture Specification (ARCHITECTURE.md)
+# ARCHITECTURE: ubed-web
 
-## 1. High-Level System Architecture
+Single Next.js 16 app. No monorepo. No database. Consumes `@ubed/ui` from npm.
 
-The Ubed Khan digital ecosystem is engineered as a decoupled, multi-subdomain system powered by **Next.js 16**, **TypeScript**, and a unified backend data layer.
-
+## 1. System
 ```mermaid
 graph TD
-    User([Public Visitor]) -->|HTTPS / Root Domain| MainSite["Portfolio & Blog Reader<br/>ubed.in<br/>(Next.js 16 App Router)"]
-    AdminUser([Ubed Khan / Admin]) -->|HTTPS / Admin Subdomain| CMSApp["Admin CMS Dashboard<br/>admin.ubed.in<br/>(Next.js 16 / Auth / Editor)"]
-    DevUser([Developer / Designer]) -->|HTTPS / UI Subdomain| UILib["UI Component Library<br/>ui.ubed.in<br/>(Storybook / Next.js Showcase)"]
-
-    MainSite -->|SSR / ISR Data Fetching| DB[(Central Database<br/>PostgreSQL / MongoDB via Prisma)]
-    CMSApp -->|CRUD Operations / Server Actions| DB
-    CMSApp -->|Asset Uploads| MediaCDN[Cloudinary / S3 CDN]
-    MainSite -->|Static Media Delivery| MediaCDN
-    UILib -->|Imports Shared UI Core| UICore[Shared UI Packages]
+    V[Visitor / Crawler] --> W[ubed.in Next.js 16 on Vercel]
+    W --> C[(MDX content in repo)]
+    W --> U[@ubed/ui from npm]
+    W --> F[/api/contact]
+    F --> T[Turnstile verify]
+    F --> R[Upstash rate limit]
+    F --> M[Web3Forms or Resend]
+    W -. links .-> D[ui.ubed.in docs]
 ```
 
----
-
-## 2. Next.js 16 App Router Structure
-
-The application leverages the Next.js 16 App Router with route grouping, Server Component layout rendering, and optimized font loading.
-
+## 2. Repo layout
 ```
-src/app/
-├── (site)/                        # Main portfolio route group
-│   ├── page.tsx                   # Server Component: composed portfolio page
-│   └── layout.tsx                 # Root layout with fonts, metadata, providers
-├── blog/                          # Public blog reader
-│   ├── page.tsx                   # Blog list (Server Component + ISR)
-│   └── [slug]/
-│       ├── page.tsx               # Blog article (Server Component + SEO Schema)
-│       └── opengraph-image.tsx    # Dynamic OpenGraph image generator
-├── api/                           # Backend API Route Handlers
-│   ├── contact/route.ts           # Secure contact form endpoint
-│   └── blogs/route.ts             # REST endpoint for blog queries
-├── globals.css                    # Tailwind CSS + custom utilities
-├── sitemap.ts                     # Dynamic sitemap.xml generator
-├── robots.ts                      # Dynamic robots.txt generator
-└── not-found.tsx                  # Custom 404 page
+ubed-web/
+├─ src/
+│  ├─ app/
+│  │  ├─ (site)/page.tsx, layout.tsx
+│  │  ├─ blog/page.tsx, [slug]/page.tsx, [slug]/opengraph-image.tsx, tag/[tag]/page.tsx
+│  │  ├─ api/contact/route.ts
+│  │  ├─ sitemap.ts, robots.ts, rss.xml/route.ts, not-found.tsx
+│  ├─ components/
+│  │  ├─ sections/   Hero, About, Skills, Projects, Contact, Footer (server)
+│  │  ├─ islands/    *.client.tsx (GSAP, Framer, Lenis, cursor)
+│  │  └─ blog/       PostCard, Toc, CodeBlock, ShareRow
+│  ├─ content/blog/*.mdx
+│  ├─ data/          projects.ts, skills.ts, site.ts
+│  ├─ lib/           content.ts, seo.ts, schemas.ts, ratelimit.ts
+│  └─ styles/        globals.css
+├─ public/           fonts, blog images, stickers
+├─ docs/             project documentation
+└─ next.config.ts, tailwind config, package.json, tsconfig.json
 ```
 
----
-
-## 3. Server Component Island Pattern (Zero-SEO-Loss)
-
-### 3.1 The Problem
-In standard single-page React applications (such as Vite SPAs), content is mounted dynamically by client-side JavaScript. Web crawlers with delayed JavaScript evaluation or strict budgets may index an empty shell or fail to discover headings, project links, and semantic structure.
-
-### 3.2 The Solution: Server First + Client Islands
-1. **Server Components (RSC) deliver the initial DOM**:
-   - Headings (`<h1>UBED KHAN</h1>`, `<h2>PROJECTS</h2>`, `<h2>SKILLS</h2>`), project titles, descriptions, skills lists, contact details, and blog content are rendered server-side.
-   - The initial HTTP response contains complete, structured HTML that is instantly crawlable by search engines.
-2. **Client Islands (`"use client"`) layer interactive physics**:
-   - Canvas animations, GSAP ScrollTrigger pins, Framer Motion spring repulsions, and Lenis smooth scrolling are scoped inside isolated client wrappers.
-   - The animations enhance existing DOM nodes or wrap interactive elements (like buttons and avatars) without replacing or withholding text.
+## 3. Rendering strategy (zero SEO loss)
+- Server Components deliver complete HTML: headings, project text, skills, contact details, blog content.
+- Client islands (`"use client"`) add canvas, GSAP ScrollTrigger, Framer Motion, Lenis. They wrap or enhance existing DOM and never withhold text.
+- All pages are statically generated (`generateStaticParams` for blog).
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    actor Crawler as Search Crawler (Googlebot)
-    actor Browser as User Browser
-    participant Server as Next.js 16 Server (RSC)
-    participant Client as Client Islands (GSAP / Lenis)
-
-    Crawler->>Server: GET / HTTP/1.1
-    Server-->>Crawler: Complete HTML + Semantic Tags + JSON-LD Schema
-    Note over Crawler: 100% Text & Metadata Indexed Immediately!
-
-    Browser->>Server: GET / HTTP/1.1
-    Server-->>Browser: Complete HTML (Fast First Contentful Paint)
-    Browser->>Client: Hydrate Interactive Islands
-    Client->>Browser: Mount Lenis Smooth Scroll + GSAP ScrollTriggers + Framer Repel
-    Note over Browser: Rich 60fps Visual Physics Active
+    actor Crawler
+    actor Browser
+    participant Server as Next.js (RSC)
+    participant Island as Client islands
+    Crawler->>Server: GET /
+    Server-->>Crawler: Complete HTML + JSON-LD
+    Browser->>Server: GET /
+    Server-->>Browser: Complete HTML (fast FCP)
+    Browser->>Island: Hydrate
+    Island->>Browser: Lenis + GSAP + Framer active
 ```
 
+## 4. Animation lifecycle
+- Lenis in a `SmoothScrollProvider` with `cancelAnimationFrame` cleanup.
+- GSAP in `useGSAP(() => {...}, { scope: ref })`; plugins registered once, client only.
+- `ScrollTrigger.refresh()` after fonts/images settle.
+- Heavy sections loaded with `next/dynamic`.
+- Every effect has a `prefers-reduced-motion` branch.
+
+## 5. Routes
+| Route | Purpose | Rendering |
+| :-- | :-- | :-- |
+| `/` | Portfolio | Static + islands |
+| `/blog` | Index | Static |
+| `/blog/[slug]` | Post | Static, JSON-LD, OG image |
+| `/blog/tag/[tag]` | Tag archive | Static; noindex if < 2 posts |
+| `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Crawler files | Generated |
+| `/api/contact` | Submit contact | Route handler (node) |
+| not-found | 404 | Static |
+
+All public. No auth, so no guards.
+
+## 6. Content model
+```yaml
 ---
-
-## 4. Animation Pipeline & Lifecycle Management
-
-### 4.1 Libraries & Roles
-- **Lenis (`@studio-freight/lenis` / `lenis`)**: Smooth scrolling provider, synchronizing browser scroll coordinates with high-performance CSS transforms (`translate3d`).
-- **GSAP & ScrollTrigger (`@gsap/react`)**: Scroll-driven pinned timelines (Skills section, Projects 3D deck stack), scroll-velocity marquee multipliers, and parallax sticker triggers.
-- **Framer Motion (`framer-motion`)**: Interactive physics-based spring interactions (`whileHover`, `whileTap`, repel calculations) on buttons and avatars.
-
-### 4.2 Hydration & Cleanup Protocol
-To eliminate hydration mismatches, memory leaks, and pinned-spacer calculation errors:
-- All GSAP effects are enclosed within `useGSAP(() => { ... }, { scope: containerRef })`.
-- GSAP automatically kills and cleans up triggers on unmount.
-- Lenis runs within a dedicated `SmoothScrollProvider` with `cancelAnimationFrame` cleanup.
-
+title: "How I built pinned scroll sections with GSAP"
+slug: gsap-pinned-scroll-sections
+summary: "Why my pinned section kept jumping and the fix."   # 140-160 chars
+category: Web Dev          # Web Dev | UI/UX | Architecture | Learning in Public
+tags: [gsap, scrolltrigger, nextjs]
+cover: /blog/gsap-pinned/cover.webp
+coverAlt: "Screenshot of the pinned skills section"
+publishedAt: 2026-12-01
+updatedAt: 2026-12-01
+draft: false
+relatedComponent: velocity-marquee      # slug on ui.ubed.in (optional)
 ---
-
-## 5. Database CMS Architecture (Option B)
-
-### 5.1 Technology Choice
-- **Database**: PostgreSQL (hosted on Neon/Supabase) or MongoDB Atlas.
-- **ORM / Query Engine**: Prisma ORM with strict TypeScript client generation (`@prisma/client`).
-- **Data Mutation**: Next.js Server Actions with Zod schema validation.
-
-### 5.2 Core Schema Models
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model BlogPost {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  summary     String
-  content     String   // Full Markdown or Rich Text HTML
-  category    String
-  tags        String[]
-  coverImage  String?
-  published   Boolean  @default(false)
-  viewCount   Int      @default(0)
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  authorId    String
-  author      Author   @relation(fields: [authorId], references: [id])
-}
-
-model Author {
-  id        String     @id @default(cuid())
-  name      String
-  email     String     @unique
-  avatar    String?
-  bio       String?
-  posts     BlogPost[]
-}
-
-model Project {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  subtitle    String
-  description String
-  features    String[]
-  tech        String[]
-  image       String
-  githubUrl   String?
-  liveUrl     String?
-  order       Int      @default(0)
-  published   Boolean  @default(true)
-}
-
-model UIComponent {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  category    String
-  description String
-  code        String
-  previewUrl  String?
-  published   Boolean  @default(true)
-}
 ```
+Validated by Zod at build time (`src/lib/schemas.ts`). Projects are typed data in `src/data/projects.ts`.
 
----
+## 7. Using `@ubed/ui`
+- Install: `pnpm add @ubed/ui` plus its peer deps (`gsap`, `@gsap/react`, `framer-motion`).
+- Theme: `import '@ubed/ui/styles.css'` once in the root layout; map site tokens to `--ubed-*` in `globals.css`.
+- Use components inside client islands; the package marks interactive components `"use client"`.
+- Version policy: caret range; Dependabot/Renovate opens bump PRs; read the library changelog before merging majors.
+- **Do not copy library code here.** If a component needs a change, change it in `ubed-ui`, release, then bump.
+- Portfolio-only components (hero composition, project deck) stay in this repo. If one becomes reusable, move it to `ubed-ui` using that repo's `MAINTENANCE.md`, then replace the local copy with the import.
 
-## 6. Security & Environment Configuration
+### Developing against an unreleased library change
+| Method | When |
+| :-- | :-- |
+| Snapshot/prerelease from `ubed-ui` (`pnpm add @ubed/ui@beta`) | Safest; mirrors real install |
+| `pnpm pack` in `ubed-ui/packages/ui` then `pnpm add ../path/ubed-ui-x.tgz` | Quick one-off test |
+| `pnpm link ../ubed-ui/packages/ui` with `tsup --watch` running | Live iteration; if duplicate React errors appear, link React from this repo (`pnpm link react react-dom`) |
 
-### 6.1 Server vs Client Secrets
-- Client-safe variables must be prefixed with `NEXT_PUBLIC_` (e.g. `NEXT_PUBLIC_SITE_URL`).
-- Sensitive keys (e.g. `DATABASE_URL`, `WEB3_API_KEY`, `ADMIN_SECRET_KEY`) reside exclusively in server environments and are never bundled into client JavaScript.
+Never merge to `main` with a `link:` or `file:` dependency.
 
-### 6.2 Contact Form Security
-The contact form submits directly to the internal Next.js Route Handler `/api/contact`, which:
-1. Validates input fields using a Zod schema.
-2. Applies rate limiting.
-3. Forwards the message to Web3Forms or an SMTP transport server-side, protecting the API key from public scraping.
+## 8. Contact endpoint
+1. Parse body with Zod.
+2. Reject if honeypot field filled.
+3. Verify Cloudflare Turnstile token server-side.
+4. Rate limit by IP with Upstash Ratelimit.
+5. Forward via Web3Forms or Resend (key server-side only).
+6. Return typed JSON; never echo raw HTML.
+
+## 9. Tech decisions
+| Tech | Purpose | Why | Alternative | Trade-off |
+| :-- | :-- | :-- | :-- | :-- |
+| Next.js 16 | App | RSC, static output, existing | Astro | Would lose React reuse |
+| TypeScript strict | Safety | Fewer runtime bugs | n/a | Slower to write |
+| Tailwind | Styling | Existing stack | CSS Modules | Consumers' classes vs package CSS (handled by `styles.css`) |
+| GSAP, Framer Motion, Lenis | Motion | Existing | CSS scroll-driven animation | Bundle cost; keep islands lazy |
+| MDX (Velite or next-mdx-remote) | Blog | Typed, static | DB CMS | Edit via git |
+| Zod | Validation | Form + frontmatter | Valibot | Slightly larger |
+| Upstash + Turnstile | Form protection | Free, serverless-safe | In-memory limit | Two services |
+| Vitest, Playwright, axe, Lighthouse CI | Testing | Fast + real browser + a11y + perf | Jest/Cypress | CI time |
+| Vercel Analytics + Speed Insights | Monitoring | Free, zero config | Plausible/Umami | Limited on Hobby |
+
+## 10. SEO
+- `generateMetadata` per route (title < 60 chars, description < 160), canonical, robots.
+- `opengraph-image.tsx` for posts.
+- JSON-LD: Person + WebSite (home), `BlogPosting` and `BreadcrumbList` (posts).
+- `sitemap.ts` lists only `ubed.in` URLs; the UI site has its own sitemap.
+- One canonical host; redirect `www` to apex (or reverse), `http` to `https`.
+- `next/font` with fallbacks; reserve sticker sizes to avoid CLS.
+- Internal links: posts to component pages on `ui.ubed.in` and each other; footer links to both.
+
+## 11. Security
+- Secrets only in Vercel/GitHub secrets; only `NEXT_PUBLIC_*` reaches the client.
+- Security headers in `next.config` (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, frame-ancestors); test CSP with GSAP/analytics before enforcing.
+- Dependabot/Renovate, `pnpm audit` in CI, secret scanning, branch protection.
+
+## 12. Testing
+| Layer | Tool | What |
+| :-- | :-- | :-- |
+| Static | tsc, ESLint, Prettier | Zero errors |
+| Unit | Vitest | `lib/` helpers, schemas, content loader |
+| E2E | Playwright | Home, blog, post, tag, contact (mock), 404 |
+| A11y | axe + Playwright | No serious/critical on public routes |
+| Perf | Lighthouse CI | Perf 95, A11y 100, SEO 100, CLS 0.05 |
+
+## 13. Future (not now)
+Add Postgres + Prisma only for comments, view counts, newsletter or accounts. Add Keystatic/Decap if editing in the IDE becomes a burden.

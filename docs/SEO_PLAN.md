@@ -253,8 +253,10 @@ export default function robots(): MetadataRoute.Robots {
 
 ---
 
-## 7. Multi-Subdomain SEO Governance
+## 7. Multi-Domain & Subdomain SEO Governance
 
-1. **Root Domain (`ubed.in`)**: Primary authority hub hosting portfolio showcase and blog articles.
-2. **Admin Subdomain (`admin.ubed.in`)**: Must be configured with `X-Robots-Tag: noindex, nofollow` and protected behind authentication so search engines do not index private management views.
-3. **UI Library Subdomain (`ui.ubed.in`)**: Configured with its own sitemap, cross-linking back to `ubed.in` as the creator/parent authority with canonical attribution.
+1. **Root Domain (`ubed.in`)**: Primary authority hub hosting the portfolio showcase and blog articles.
+2. **UI Library Subdomain (`ui.ubed.in`)**: Deployed separately by the `ubed-ui` repository. Configured with its own sitemap, cross-linking back to `ubed.in` as the creator/parent authority with canonical attribution.
+3. **Internal Cross-Linking Strategy**:
+   - Each blog post on `ubed.in/blog` exploring a UI pattern links directly to the corresponding component documentation on `ui.ubed.in`.
+   - The UI Library documentation pages on `ui.ubed.in` link back to `ubed.in` in the navigation, footer, and related blog links.

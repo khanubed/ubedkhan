@@ -1,115 +1,71 @@
-# Engineering Standards & Style Guide (RULES.md)
+# RULES: ubed-web
 
-## 1. Core Principles
-1. **Zero Runtime Any**: TypeScript `strict` mode must be enabled at all times. Do not suppress type errors using `any` or `@ts-ignore` without documented justification.
-2. **Server-First by Default**: Every component is a Server Component unless it directly handles browser events, state (`useState`, `useEffect`), or interactive animations (`useGSAP`, `framer-motion`).
-3. **No Layout Shift (CLS: 0)**: Fonts must be loaded via `next/font`, and images must provide explicit `width`/`height` or `fill` with `sizes`.
-4. **Clean Garbage Collection**: Every event listener, animation ticker, or interval must be properly disposed of in cleanup callbacks.
+Rules for humans and AI agents.
 
----
+## 1. Golden rules
+1. Server-first: content and metadata in initial HTML.
+2. No animation without purpose or without a reduced-motion path.
+3. Do not duplicate library components here; use `@ubed/ui`.
+4. Never commit secrets, purchased/licensed files, or large raw media.
+5. Keep scope small; ship, then refine.
 
-## 2. Directory Placement Guidelines
+## 2. Naming
+| Item | Convention |
+| :-- | :-- |
+| Files/folders | `kebab-case` (client islands end in `.client.tsx`) |
+| Components | `PascalCase`, one per file, named exports (default only for Next pages/layouts) |
+| Functions/variables | `camelCase`; booleans `is/has/should`; hooks `use*` |
+| Types | `PascalCase`; props `<Component>Props` |
+| Constants/env | `SCREAMING_SNAKE_CASE`; client-safe `NEXT_PUBLIC_*` |
+| Routes | lowercase, hyphenated |
+| Branches | `feat/<name>`, `fix/<name>`, `hotfix/<name>`, `content/<slug>` |
 
-```
-src/
-├── app/                  # Routing ONLY. Keep page components thin.
-│   ├── (site)/page.tsx   # Composes sections.
-│   └── api/              # Route handlers for HTTP endpoints.
-├── components/
-│   ├── common/           # Cross-cutting widgets (MouseFollower, Preloader).
-│   ├── layout/           # Global chrome (NavBar, Footer).
-│   ├── sections/         # Feature sections (Hero, AboutMe, Skills, Projects, Contact).
-│   ├── ui/               # Reusable atomic UI (Buttons, Form controls, Marquees).
-│   └── providers/        # Context providers (SmoothScrollProvider).
-├── data/                 # Static data contracts and fallback datasets.
-├── hooks/                # Reusable React hooks.
-├── lib/                  # Pure utility functions, font loaders, SEO schema generators.
-└── types/                # Shared TypeScript interfaces and type definitions.
-```
+## 3. TypeScript and React
+- `strict: true`; no `any` (use `unknown` and narrow).
+- Zod at boundaries (contact form, frontmatter, env).
+- Server Components by default; `"use client"` only for state, effects, browser APIs.
+- No `window`/`document` during render.
+- Never swallow errors; route handlers return typed JSON with correct status codes.
 
----
+## 4. Animation rules
+- `useGSAP(() => {...}, { scope })`; no global selectors.
+- Register plugins once, client only.
+- Animate `transform`/`opacity`; avoid layout-triggering properties.
+- Kill/pause on unmount and when offscreen.
+- Respect `prefers-reduced-motion`.
+- Dynamic-import heavy sections. Cursor effects only for fine pointers.
 
-## 3. TypeScript Rules
+## 5. Using the library
+- Import from `@ubed/ui` only. Do not copy its source here.
+- Need a change? Make it in `ubed-ui`, release, then bump the version here.
+- Never merge a `link:` or `file:` dependency to `main`.
+- Moving a portfolio component into the library: follow `ubed-ui/MAINTENANCE.md`, then delete the local copy and import the package version.
 
-### 3.1 Strict Typing
-- Define clear interfaces in `src/types/` for all domain entities (`Project`, `Skill`, `BlogPost`, `ContactFormPayload`).
-- Never use `React.FC` or `React.FunctionComponent`. Use standard typed function signatures:
-  ```typescript
-  // CORRECT:
-  interface ProjectCardProps {
-    project: Project;
-    index: number;
-  }
-  export function ProjectCard({ project, index }: ProjectCardProps) { ... }
-  ```
+## 6. Git
+Commit format: `type(scope): summary`. Types: `feat fix refactor docs test chore perf security ci build`. Scopes: `site`, `blog`, `content`, `seo`, `api`, `deps`, `config`.
+| Good | Bad |
+| :-- | :-- |
+| `feat(blog): add tag archive pages` | `update stuff` |
+| `fix(site): prevent CLS on hero font swap` | `fixed bug` |
+| `content: add post on pinned scroll sections` | `new post final v2` |
+| `perf(site): lazy-load GSAP in skills section` | `changes` |
+| `security(api): rate limit contact endpoint` | `wip` |
 
-### 3.2 Typing Events & DOM Refs
-- Always specify HTML element types on refs:
-  ```typescript
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  ```
+- Trunk-based; short-lived branches (under 3 days); rebase on `main`; squash merge; delete branch.
+- `main` protected: PR + required checks + up-to-date; no force-push or deletion.
+- **Never commit:** `.env*`, keys, tokens, `node_modules`, `.next`, large raw media, purchased/licensed files, personal data.
 
----
+## 7. Content
+Follow `docs/CONTENT_GUIDE.md`. Frontmatter must pass the Zod schema. No invented facts or benchmarks.
 
-## 4. Animation & Client Component Protocol
+## 8. Accessibility
+One `h1`; landmarks; native elements before ARIA; visible focus; keyboard operable; contrast 4.5:1/3:1; forms with labels and `aria-describedby`; success actions via `aria-live`.
 
-### 4.1 Client Island Isolation
-- Always place the `"use client";` directive at the very top of files containing interactive hooks.
-- Separate semantic text markup from heavy interactive physics. For example:
-  - `Hero.tsx` (Server Component) renders the `<h1>` and semantic `<header>`.
-  - `HeroInteractiveBitmoji.tsx` (`"use client"`) manages the motion spring tap and hover effects.
+## 9. Security
+Secrets only in Vercel/GitHub secrets; contact endpoint uses Zod + honeypot + Turnstile + rate limit; no raw HTML echo; 2FA on GitHub; minimal dependencies.
 
-### 4.2 GSAP Guidelines
-- **Always** wrap GSAP animations in `useGSAP` from `@gsap/react` with `{ scope: ref }`:
-  ```typescript
-  useGSAP(() => {
-    gsap.to('.target', { x: 100 });
-  }, { scope: containerRef });
-  ```
-- Do not import GSAP or initialize ScrollTrigger in Server Components.
-- Use `force3D: true` on transforms to prevent repaints and jitter on low-powered mobile devices.
+## 10. Licensing
+Keep `LICENSES.md` current. Original or licensed assets only. No film/anime/game/meme-photo material. Confirm font and avatar terms.
 
-### 4.3 Framer Motion Guidelines
-- Avoid heavy layout animations on elements that reflow large portions of the DOM. Prefer transform-based animations (`x`, `y`, `scale`, `rotate`, `opacity`).
-- Use `AnimatePresence mode="wait"` when swapping animated elements (e.g. `PassionText`).
-
----
-
-## 5. Performance & Asset Rules
-
-1. **Images**:
-   - Use Next.js `<Image />` for all content images.
-   - Always supply a descriptive `alt` attribute (e.g. `alt="Vedic Services web application showcase"`).
-   - Use `priority` only on above-the-fold assets (Hero Bitmoji).
-2. **Typography**:
-   - Never import fonts from external CSS `@import` or `<link>` tags in HTML.
-   - Use `next/font/local` and `next/font/google` in `src/lib/fonts.ts`.
-3. **Smooth Scroll**:
-   - Never run both Lenis and Locomotive Scroll simultaneously. Lenis is the designated smooth scroll engine for this project.
-
----
-
-## 6. Git & Branching Conventions
-
-### Commit Format (Conventional Commits)
-- `feat(scope): ...` — New user-facing feature.
-- `fix(scope): ...` — Bug fix.
-- `docs(scope): ...` — Documentation updates.
-- `refactor(scope): ...` — Code improvement without feature change.
-- `perf(scope): ...` — Performance optimizations.
-- `chore(scope): ...` — Build, dependency, or config changes.
-
----
-
-## 7. Context Memory & `memory.md` Maintenance Protocol
-
-The project maintains a persistent context memory file at the project root: `memory.md`. This file guarantees that any developer or AI assistant maintains 100% context across sessions.
-
-### Mandatory Rules for `memory.md`:
-1. **First-Turn Context Sync**: At the start of any new session or feature request, `memory.md` must be read first to understand what has been completed, what is pending, and the latest architectural state.
-2. **Atomic Changelog Updates**: Any work that modifies routes, introduces new dependencies, alters database contracts, or adjusts design tokens must be logged in `memory.md` under Section 2 (`Completed Milestones & Changelog`).
-3. **Directory Map Synchronization**: When new files or directories are created or deleted, Section 3 (`Directory Map & File Inventory`) must be updated to reflect the exact state of the project tree.
-4. **Verification Log**: Every time changes are verified, record the status of `npm run typecheck` and `npm run build` with the exit status and route breakdown.
-5. **Never Delete Context History**: Historical completed milestones must remain preserved so that design decisions, resolved bugs, and architectural patterns remain permanently accessible.
-
+## 11. Definition of Done
+Types, lint, tests green; a11y checked; Lighthouse budgets met on preview; docs updated; reduced motion verified; new assets recorded in `LICENSES.md`.
