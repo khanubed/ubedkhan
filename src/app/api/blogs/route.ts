@@ -9,7 +9,7 @@ export async function GET() {
   });
 }
 
-// Protected POST endpoint for the future CMS on admin.domainname.com
+// Protected POST endpoint for the future CMS on admin.ubed.in
 export async function POST(request: Request) {
   try {
     const authHeader = request.headers.get('authorization');

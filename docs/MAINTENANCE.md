@@ -2,16 +2,16 @@
 
 ## 1. Custom Domain & DNS Configuration
 
-When you purchase your domain (e.g. `ubedkhan.dev` or `ubedkhan.com`), follow this setup to connect the main portfolio, blog reader, CMS, and UI library.
+Follow this setup to connect your purchased domain (`ubed.in`) to the main portfolio, blog reader, CMS, and UI library on Vercel.
 
 ### 1.1 DNS Records Table
 
 | Type | Name / Host | Value / Target | Description |
 | :--- | :--- | :--- | :--- |
-| **A** | `@` (root) | `76.76.21.21` | Points `domainname.com` to Vercel Edge Network |
-| **CNAME** | `www` | `cname.vercel-dns.com` | Redirects `www.domainname.com` to apex domain |
-| **CNAME** | `admin` | `cname.vercel-dns.com` | Routes `admin.domainname.com` to the Admin CMS deployment |
-| **CNAME** | `ui` | `cname.vercel-dns.com` | Routes `ui.domainname.com` to the UI Library deployment |
+| **A** | `@` (root) | `76.76.21.21` | Points `ubed.in` to Vercel Edge Network |
+| **CNAME** | `www` | `cname.vercel-dns.com` | Redirects `www.ubed.in` to apex domain |
+| **CNAME** | `admin` | `cname.vercel-dns.com` | Routes `admin.ubed.in` to the Admin CMS deployment |
+| **CNAME** | `ui` | `cname.vercel-dns.com` | Routes `ui.ubed.in` to the UI Library deployment |
 
 ### 1.2 SSL Certificates
 - Vercel automatically provisions and renews free Let's Encrypt Wildcard SSL certificates for apex domains and subdomains once DNS propagation completes (typically 5 to 30 minutes).
@@ -24,7 +24,7 @@ Create a `.env.local` file in your root directory based on `.env.example`:
 
 ```bash
 # Public Domain Settings
-NEXT_PUBLIC_SITE_URL=https://ubedkhan.com
+NEXT_PUBLIC_SITE_URL=https://ubed.in
 
 # Contact Form Integration (Server-only secret)
 WEB3_API_KEY=your_web3forms_access_key_here
@@ -32,7 +32,7 @@ WEB3_API_KEY=your_web3forms_access_key_here
 # Central Database (Option B - PostgreSQL / MongoDB)
 DATABASE_URL="postgresql://user:password@host:5432/portfolio_db?sslmode=require"
 
-# Admin CMS Auth Secret (for admin.domainname.com)
+# Admin CMS Auth Secret (for admin.ubed.in)
 NEXTAUTH_SECRET=your_nextauth_generated_secret_key
 ADMIN_API_KEY=your_secure_internal_api_key
 ```
@@ -77,7 +77,7 @@ To feature a new project on the portfolio:
 3. The skills grid dynamically rebalances its two rows automatically!
 
 ### 3.3 Adding a Blog Post
-1. Under `src/data/blogs.ts` (or via the future `admin.domainname.com` CMS):
+1. Under `src/data/blogs.ts` (or via the future `admin.ubed.in` CMS):
    ```typescript
    {
      id: "building-zero-cls-portfolio",

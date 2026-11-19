@@ -1,7 +1,7 @@
 import { Project } from '@/types/project';
 import { BlogPost } from '@/types/blog';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
 
 export function getPersonSchema() {
   return {

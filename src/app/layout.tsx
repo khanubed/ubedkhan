@@ -5,7 +5,7 @@ import NavBar from '@/components/layout/NavBar';
 import { getPersonSchema, getWebSiteSchema } from '@/lib/seo';
 import './globals.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

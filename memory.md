@@ -14,7 +14,7 @@
 | **Styling** | Tailwind CSS v3.4 + PostCSS (ESM) |
 | **Display Typography** | Self-hosted `Republica Minor 2.0` (`/fonts/Republica-Minor-2.0.woff`) |
 | **Motion & Scroll** | GSAP 3.15 (`@gsap/react`), Framer Motion 12.23, Lenis 1.1 |
-| **Target Subdomains** | `domainname.com` (Portfolio & Blog Reader)<br/>`admin.domainname.com` (Separate CMS App)<br/>`ui.domainname.com` (UI Component Library Showcase) |
+| **Target Subdomains** | `ubed.in` (Portfolio & Blog Reader)<br/>`admin.ubed.in` (Separate CMS App)<br/>`ui.ubed.in` (UI Component Library Showcase) |
 | **Database Strategy** | Option B: Central Database CMS (PostgreSQL/MongoDB via Prisma) |
 
 ---
@@ -120,6 +120,18 @@
   - `npm run typecheck` (`tsc --noEmit`) -> **0 errors**.
   - `npm run build` -> **Exit code 0** (all 8 static/dynamic routes compiled cleanly).
 
+### Milestone: Custom Domain `ubed.in` Integration (2026-11-18)
+- [x] **Domain Acquisition**: Registered custom domain `ubed.in`.
+- [x] **Codebase Base URL Migration**:
+  - Updated fallback site URLs to `https://ubed.in` across `src/app/layout.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`, and `src/lib/seo.ts`.
+  - Updated structured JSON-LD schemas (`Person`, `WebSite`, `CreativeWork`) to resolve to `https://ubed.in`.
+- [x] **Subdomain Architecture Alignment**:
+  - Replaced generic placeholder `domainname.com` with `ubed.in` (portfolio & blog), `admin.ubed.in` (CMS), and `ui.ubed.in` (UI component library) across `.env.example`, `.env.local`, `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/MAINTENANCE.md`, `docs/SEO_PLAN.md`, `README.md`, and `memory.md`.
+- [x] **DNS Setup Blueprint**:
+  - Configured DNS routing table in `docs/MAINTENANCE.md` specifying apex `A` record (`76.76.21.21`) and `CNAME` records for `www`, `admin`, and `ui` targeting `cname.vercel-dns.com`.
+- [x] **Verification**:
+  - `npm run typecheck` passed (0 errors), `npm run build` passed (Exit code 0).
+
 
 
 
@@ -181,18 +193,20 @@ ubedkhan/
 
 ## 4. Pending Roadmap & Next Steps
 
-1. **Custom Domain & Vercel Deployment**:
-   - Buy domain (e.g. `ubedkhan.com` or `ubedkhan.dev`).
-   - Add apex domain and wildcard/subdomain DNS records as documented in [docs/MAINTENANCE.md](file:///d:/CODING/PORTFOLIO/ubedkhan/docs/MAINTENANCE.md).
-   - Configure environment variables (`NEXT_PUBLIC_SITE_URL`, `WEB3_API_KEY`) on Vercel.
+1. **Custom Domain (`ubed.in`) & Vercel Deployment**:
+   - [x] Purchased domain `ubed.in`.
+   - [ ] Add `ubed.in` and `www.ubed.in` in Vercel project Settings -> Domains.
+   - [ ] Add apex and CNAME DNS records at domain registrar as documented in [docs/MAINTENANCE.md](file:///d:/CODING/PORTFOLIO/ubedkhan/docs/MAINTENANCE.md).
+   - [ ] Update Vercel environment variable `NEXT_PUBLIC_SITE_URL=https://ubed.in`.
+   - [ ] Verify ownership in Google Search Console via DNS TXT record or HTML tag.
 2. **Database CMS Setup (Option B)**:
    - Initialize Prisma ORM with PostgreSQL (Neon / Supabase) or MongoDB Atlas.
    - Connect `/api/blogs` to database queries.
-3. **Separate Admin CMS App (`admin.domainname.com`)**:
+3. **Separate Admin CMS App (`admin.ubed.in`)**:
    - Create standalone Next.js 16 admin panel with authentication (NextAuth/Clerk).
    - Rich Markdown / WYSIWYG editor for drafting and publishing blogs.
    - Management dashboards for featured projects and UI components.
-4. **UI Component Library Showcase (`ui.domainname.com`)**:
+4. **UI Component Library Showcase (`ui.ubed.in`)**:
    - Build component documentation site for Ubed Khan's custom UI primitives.
 
 ---

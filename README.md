@@ -10,9 +10,9 @@
 This repository houses the flagship web presence for **Ubed Khan**, designed with a signature aesthetic merging **monumental brutalist typography** (`Republica Minor 2.0`), **futuristic neon minimalism**, and **fluid physics-driven micro-interactions**.
 
 Beyond a standard portfolio, this project forms the core hub of a **three-tier multi-subdomain digital ecosystem**:
-1. **`domainname.com` (Main Site & Blog Reader)**: The primary public portfolio showcase, interactive experience, and technical blog reader.
-2. **`admin.domainname.com` (Dedicated Admin CMS App)**: A standalone admin management dashboard powered by a central database (PostgreSQL/MongoDB via Prisma) to author blog articles, manage portfolio projects, and publish UI components.
-3. **`ui.domainname.com` (UI Component Library Showcase)**: A dedicated interactive component library showcasing custom UI primitives, design tokens, and animation sandboxes created by Ubed Khan.
+1. **`ubed.in` (Main Site & Blog Reader)**: The primary public portfolio showcase, interactive experience, and technical blog reader.
+2. **`admin.ubed.in` (Dedicated Admin CMS App)**: A standalone admin management dashboard powered by a central database (PostgreSQL/MongoDB via Prisma) to author blog articles, manage portfolio projects, and publish UI components.
+3. **`ui.ubed.in` (UI Component Library Showcase)**: A dedicated interactive component library showcasing custom UI primitives, design tokens, and animation sandboxes created by Ubed Khan.
 
 ---
 
@@ -21,9 +21,9 @@ Beyond a standard portfolio, this project forms the core hub of a **three-tier m
 ```mermaid
 graph TD
     subgraph Ecosystem [Multi-Subdomain Ecosystem]
-        MainSite["Main Portfolio & Blog Reader<br/><b>domainname.com</b><br/>(Next.js 16 App Router)"]
-        AdminCMS["Separate CMS App<br/><b>admin.domainname.com</b><br/>(NextAuth + Editor + Dashboards)"]
-        UILibrary["UI Library Playground<br/><b>ui.domainname.com</b><br/>(Interactive Component Showcase)"]
+        MainSite["Main Portfolio & Blog Reader<br/><b>ubed.in</b><br/>(Next.js 16 App Router)"]
+        AdminCMS["Separate CMS App<br/><b>admin.ubed.in</b><br/>(NextAuth + Editor + Dashboards)"]
+        UILibrary["UI Library Playground<br/><b>ui.ubed.in</b><br/>(Interactive Component Showcase)"]
     end
 
     subgraph DataLayer [Shared Backend & Infrastructure]
@@ -45,9 +45,9 @@ graph TD
 ### Domain Tier Breakdown
 | Domain / Subdomain | Target Application | Responsibility |
 | :--- | :--- | :--- |
-| **`domainname.com`** | Main Portfolio + `/blog` | High-impact brutalist typography, pinned GSAP storytelling, zero-SEO-loss server rendered sections, interactive physics Bitmoji, public blog reader. |
-| **`admin.domainname.com`** | Separate CMS Application | Protected admin dashboard (Ubed Khan only). Full CRUD for blog posts, featured projects, and UI component registry. |
-| **`ui.domainname.com`** | UI Component Library | Dedicated documentation playground and live component sandbox displaying reusable UI components and animations with code copy. |
+| **`ubed.in`** | Main Portfolio + `/blog` | High-impact brutalist typography, pinned GSAP storytelling, zero-SEO-loss server rendered sections, interactive physics Bitmoji, public blog reader. |
+| **`admin.ubed.in`** | Separate CMS Application | Protected admin dashboard (Ubed Khan only). Full CRUD for blog posts, featured projects, and UI component registry. |
+| **`ui.ubed.in`** | UI Component Library | Dedicated documentation playground and live component sandbox displaying reusable UI components and animations with code copy. |
 
 ---
 
@@ -132,14 +132,14 @@ graph TD
 - [x] Pin About Me and Skills sections with GSAP ScrollTrigger.
 - [x] Create public `/blog` and `/blog/[slug]` routes.
 
-### Phase 2: Domain Acquisition & Production Deployment (Upcoming)
-- [ ] Purchase custom domain (e.g. `ubedkhan.com` or `ubedkhan.dev`).
+### Phase 2: Domain Acquisition & Production Deployment (In Progress)
+- [x] Purchase custom domain (`ubed.in`).
 - [ ] Connect domain to Vercel with apex and subdomain DNS records:
-  - `@` (Apex) -> `76.76.21.21` (Main Site & Blog Reader)
-  - `www` -> `cname.vercel-dns.com`
-  - `admin` -> `cname.vercel-dns.com` (Admin CMS)
-  - `ui` -> `cname.vercel-dns.com` (UI Library)
-- [ ] Configure production environment variables (`NEXT_PUBLIC_SITE_URL`, `WEB3_API_KEY`).
+  - `@` (Apex) -> `76.76.21.21` (Main Site & Blog Reader `ubed.in`)
+  - `www` -> `cname.vercel-dns.com` (`www.ubed.in`)
+  - `admin` -> `cname.vercel-dns.com` (Admin CMS `admin.ubed.in`)
+  - `ui` -> `cname.vercel-dns.com` (UI Library `ui.ubed.in`)
+- [ ] Configure production environment variables (`NEXT_PUBLIC_SITE_URL=https://ubed.in`, `WEB3_API_KEY`).
 - [ ] Submit `sitemap.xml` to Google Search Console and Bing Webmaster Tools.
 
 ### Phase 3: Central Database CMS Implementation (Upcoming)
@@ -148,15 +148,15 @@ graph TD
 - [ ] Connect Next.js Server Actions to read/write from the database.
 - [ ] Enable on-demand cache revalidation (`revalidatePath('/blog')`) on publish.
 
-### Phase 4: Standalone Admin CMS App (`admin.domainname.com`) (Upcoming)
+### Phase 4: Standalone Admin CMS App (`admin.ubed.in`) (Upcoming)
 - [ ] Create standalone Next.js 16 app deployed on the `admin` subdomain.
 - [ ] Implement secure authentication for Ubed Khan (NextAuth / Clerk).
 - [ ] Rich Markdown / WYSIWYG editor for drafting, previewing, and scheduling blog articles.
 - [ ] Project showcase manager to add/edit featured projects and upload screenshots.
 - [ ] UI Library manager to register new UI components and publish code snippets.
 
-### Phase 5: UI Component Library Showcase (`ui.domainname.com`) (Upcoming)
-- [ ] Create independent Next.js 16 documentation and playground app on `ui.domainname.com`.
+### Phase 5: UI Component Library Showcase (`ui.ubed.in`) (Upcoming)
+- [ ] Create independent Next.js 16 documentation and playground app on `ui.ubed.in`.
 - [ ] Showcase Ubed Khan's custom-crafted UI components (Buttons, Cards, Marquees, Spring Avatars, Navbars).
 - [ ] Interactive live sandbox with theme switching, props controller, and one-click copy-to-clipboard snippets.
 
@@ -271,7 +271,7 @@ When sharing this project with **Claude** to generate comprehensive, production-
 - **Validation**: Verify image render, check live & github links, run `npm run typecheck`.
 
 ### SOP 2: Authoring & Publishing a Technical Blog Post
-- **Target Files**: `src/data/blogs.ts` (initial) or `admin.domainname.com` CMS (Phase 4).
+- **Target Files**: `src/data/blogs.ts` (initial) or `admin.ubed.in` CMS (Phase 4).
 - **Schema**: Slug, title, summary, markdown content, category, tags, author details, reading time.
 - **SEO Validation**: Verify dynamic OpenGraph tag generation, inspect `<script type="application/ld+json">` outputting valid `BlogPosting` schema, verify presence in `/sitemap.xml`.
 

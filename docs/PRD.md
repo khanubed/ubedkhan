@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary & Vision
 **Product Name:** Ubed Khan — Full-Stack Developer & UI/UX Designer Portfolio Ecosystem  
-**Target Domain:** `domainname.com` (Main Site & Blog Reader), `admin.domainname.com` (CMS App), `ui.domainname.com` (UI Component Library)  
+**Target Domain:** `ubed.in` (Main Site & Blog Reader), `admin.ubed.in` (CMS App), `ui.ubed.in` (UI Component Library)  
 **Vision:** Establish an authoritative, ultra-high-performance web presence that highlights Ubed Khan's engineering craftsmanship, distinctive typography aesthetic, and fluid visual interactions. The platform serves as an interactive portfolio, technical thought leadership hub (blog), showcase for custom UI components, and a centralized CMS platform.
 
 ---
@@ -28,7 +28,7 @@
 
 ## 4. Product Features & Scope
 
-### 4.1 Main Portfolio Site (`domainname.com`)
+### 4.1 Main Portfolio Site (`ubed.in`)
 - **Hero Section**:
   - Monumental "UBED KHAN" typography powered by Republica Minor font.
   - Interactive Bitmoji avatar with physics-driven repel and tap spring feedback.
@@ -55,12 +55,12 @@
 - **Custom Cursor (`MouseFollower`)**:
   - Fluid difference-blend-mode cursor tracking mouse coordinates.
 
-### 4.2 Blog Reader Section (`domainname.com/blog`)
+### 4.2 Blog Reader Section (`ubed.in/blog`)
 - Public listing of published technical articles categorized by topic (Web Dev, UI/UX, Architecture).
 - Individual article pages (`/blog/[slug]`) rendered with dynamic OpenGraph images, reading time, and author metadata.
 - Pre-rendered Server Components for zero-latency crawler indexing and Google Discover eligibility.
 
-### 4.3 Future Admin CMS (`admin.domainname.com`) *(Architectural Scope)*
+### 4.3 Future Admin CMS (`admin.ubed.in`) *(Architectural Scope)*
 - Dedicated application deployed on the `admin` subdomain.
 - Secure authentication for Ubed Khan.
 - Capabilities:
@@ -68,7 +68,7 @@
   - Manage featured projects and update screenshots.
   - Register and document new components for the UI Library.
 
-### 4.4 Future UI Component Library (`ui.domainname.com`) *(Architectural Scope)*
+### 4.4 Future UI Component Library (`ui.ubed.in`) *(Architectural Scope)*
 - Interactive component showcase and documentation hub.
 - Live sandbox previews and copy-to-clipboard code snippets.
 

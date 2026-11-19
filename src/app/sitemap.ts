@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { blogsData } from '@/data/blogs';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
 
   const blogUrls: MetadataRoute.Sitemap = blogsData
     .filter((post) => post.published)

@@ -37,7 +37,7 @@ Initial HTTP GET /
 ```typescript
 import type { Metadata } from 'next';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -120,10 +120,10 @@ Implemented in `src/lib/seo.ts` and injected into the document `<head>`:
   "@graph": [
     {
       "@type": "Person",
-      "@id": "https://ubedkhan.com/#person",
+      "@id": "https://ubed.in/#person",
       "name": "Ubed Khan",
       "jobTitle": "Full-Stack Developer & UI/UX Designer",
-      "url": "https://ubedkhan.com",
+      "url": "https://ubed.in",
       "sameAs": [
         "https://github.com/khanubed",
         "https://www.linkedin.com/in/ubed-khan-93220a22a/",
@@ -141,7 +141,7 @@ Implemented in `src/lib/seo.ts` and injected into the document `<head>`:
         "UI/UX Design",
         "Tailwind CSS"
       ],
-      "image": "https://ubedkhan.com/images/elements/bitmoji.webp",
+      "image": "https://ubed.in/images/elements/bitmoji.webp",
       "email": "mailto:ubedkhan7529@gmail.com",
       "address": {
         "@type": "PostalAddress",
@@ -153,11 +153,11 @@ Implemented in `src/lib/seo.ts` and injected into the document `<head>`:
     },
     {
       "@type": "WebSite",
-      "@id": "https://ubedkhan.com/#website",
-      "url": "https://ubedkhan.com",
+      "@id": "https://ubed.in/#website",
+      "url": "https://ubed.in",
       "name": "Ubed Khan Portfolio",
       "publisher": {
-        "@id": "https://ubedkhan.com/#person"
+        "@id": "https://ubed.in/#person"
       }
     }
   ]
@@ -175,7 +175,7 @@ Each project card outputs schema marking it as a verified software project with 
   "applicationCategory": "BusinessApplication",
   "description": "A high-performance service business platform built with a crawler-first architecture...",
   "author": {
-    "@id": "https://ubedkhan.com/#person"
+    "@id": "https://ubed.in/#person"
   },
   "url": "https://vedic-portfolio-two.vercel.app/"
 }
@@ -193,7 +193,7 @@ import { projectsData } from '@/data/projects';
 import { blogsData } from '@/data/blogs';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
 
   const blogUrls = blogsData
     .filter((post) => post.published)
@@ -227,7 +227,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubedkhan.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
   return {
     rules: [
       {
@@ -255,6 +255,6 @@ export default function robots(): MetadataRoute.Robots {
 
 ## 7. Multi-Subdomain SEO Governance
 
-1. **Root Domain (`domainname.com`)**: Primary authority hub hosting portfolio showcase and blog articles.
-2. **Admin Subdomain (`admin.domainname.com`)**: Must be configured with `X-Robots-Tag: noindex, nofollow` and protected behind authentication so search engines do not index private management views.
-3. **UI Library Subdomain (`ui.domainname.com`)**: Configured with its own sitemap, cross-linking back to `domainname.com` as the creator/parent authority with canonical attribution.
+1. **Root Domain (`ubed.in`)**: Primary authority hub hosting portfolio showcase and blog articles.
+2. **Admin Subdomain (`admin.ubed.in`)**: Must be configured with `X-Robots-Tag: noindex, nofollow` and protected behind authentication so search engines do not index private management views.
+3. **UI Library Subdomain (`ui.ubed.in`)**: Configured with its own sitemap, cross-linking back to `ubed.in` as the creator/parent authority with canonical attribution.

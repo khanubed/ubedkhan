@@ -6,9 +6,9 @@ The Ubed Khan digital ecosystem is engineered as a decoupled, multi-subdomain sy
 
 ```mermaid
 graph TD
-    User([Public Visitor]) -->|HTTPS / Root Domain| MainSite["Portfolio & Blog Reader<br/>domainname.com<br/>(Next.js 16 App Router)"]
-    AdminUser([Ubed Khan / Admin]) -->|HTTPS / Admin Subdomain| CMSApp["Admin CMS Dashboard<br/>admin.domainname.com<br/>(Next.js 16 / Auth / Editor)"]
-    DevUser([Developer / Designer]) -->|HTTPS / UI Subdomain| UILib["UI Component Library<br/>ui.domainname.com<br/>(Storybook / Next.js Showcase)"]
+    User([Public Visitor]) -->|HTTPS / Root Domain| MainSite["Portfolio & Blog Reader<br/>ubed.in<br/>(Next.js 16 App Router)"]
+    AdminUser([Ubed Khan / Admin]) -->|HTTPS / Admin Subdomain| CMSApp["Admin CMS Dashboard<br/>admin.ubed.in<br/>(Next.js 16 / Auth / Editor)"]
+    DevUser([Developer / Designer]) -->|HTTPS / UI Subdomain| UILib["UI Component Library<br/>ui.ubed.in<br/>(Storybook / Next.js Showcase)"]
 
     MainSite -->|SSR / ISR Data Fetching| DB[(Central Database<br/>PostgreSQL / MongoDB via Prisma)]
     CMSApp -->|CRUD Operations / Server Actions| DB
