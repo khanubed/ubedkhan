@@ -13,7 +13,7 @@ export default function BlogListingPage() {
   const publishedPosts = blogsData.filter((post) => post.published);
 
   return (
-    <div className="min-h-screen bg-black text-white pt-32 pb-24 px-4 sm:px-8 max-w-5xl mx-auto">
+    <div className="min-h-screen bg-transparent text-white pt-32 pb-24 px-4 sm:px-8 max-w-5xl mx-auto">
       <header className="mb-14">
         <span className="text-xs uppercase font-semibold tracking-widest text-indigo-400">
           Articles & Writing

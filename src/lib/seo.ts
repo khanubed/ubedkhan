@@ -25,9 +25,17 @@ export function getPersonSchema() {
       'MongoDB',
       'PostgreSQL',
       'GSAP',
+      'WebGL & Shaders',
+      'Interactive Fluid Simulation',
+      'Creative Development',
       'UI/UX Design',
       'Tailwind CSS',
     ],
+    hasOccupation: {
+      '@type': 'Occupation',
+      name: 'Full-Stack Developer & Creative Technologist',
+      skills: 'Next.js, TypeScript, React 19, WebGL, Node.js, GSAP',
+    },
     image: `${siteUrl}/images/elements/bitmoji.webp`,
     email: 'mailto:ubedkhan7529@gmail.com',
     address: {

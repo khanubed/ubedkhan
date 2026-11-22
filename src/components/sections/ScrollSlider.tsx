@@ -79,7 +79,7 @@ export default function ScrollSlider() {
     <section
       ref={containerRef}
       aria-label="Image Gallery Marquee"
-      className="h-[45vh] tablet:h-[75vh] py-6 w-full bg-black overflow-hidden flex flex-col justify-center gap-4 select-none"
+      className="h-[45vh] tablet:h-[75vh] py-6 w-full bg-transparent overflow-hidden flex flex-col justify-center gap-4 select-none"
     >
       {/* Row 1 */}
       <div className="h-[18vh] tablet:h-[32vh] relative w-full overflow-hidden" role="list" aria-label="First marquee row">

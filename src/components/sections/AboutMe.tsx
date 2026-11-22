@@ -166,11 +166,11 @@ export default function AboutMe() {
       id="about"
       ref={containerRef}
       aria-label="About Ubed Khan"
-      className="relative w-full bg-black"
+      className="relative w-full bg-transparent"
     >
       <div
         ref={pinRef}
-        className="relative w-screen h-screen bg-black text-white overflow-hidden flex flex-col items-center justify-center px-4 sm:px-8"
+        className="relative w-screen h-screen bg-transparent text-white overflow-hidden flex flex-col items-center justify-center px-4 sm:px-8"
       >
       {/* Decorative Corner Elements */}
       {/* Bubble (Top-Left) */}

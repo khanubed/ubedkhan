@@ -92,7 +92,7 @@ export default function Contact() {
       id="contact"
       ref={parentRef}
       aria-labelledby="contact-heading"
-      className="relative w-screen min-h-screen bg-white text-black overflow-hidden flex flex-col justify-center items-center py-16 px-4 phone:px-8"
+      className="relative w-screen min-h-screen bg-white/95 backdrop-blur-md text-black overflow-hidden flex flex-col justify-center items-center py-16 px-4 phone:px-8"
     >
       {/* Graphic Elements */}
       <figure

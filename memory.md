@@ -91,6 +91,29 @@
   - Updated root files: `README.md`, `AGENTS.md`, `LICENSES.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.env.example`.
 - [x] **Verification**: Verified zero errors in TypeScript and documentation integrity.
 
+### Feature: Whole-Website WebGL Fluid Paint Background & SEO Optimization (2026-11-22)
+- [x] **Full-Site Ambient Fluid Background**:
+  - Engineered `src/components/fluid-paint/FluidBackground.tsx` as a fixed viewport background (`fixed inset-0 -z-10 select-none overflow-hidden`).
+  - Added `subtleBackground` preset: fine stroke (`brushAmount: 0.16`), soft gliding force (`splatForce: 3200`), quick clean dissipation (`dissipation: 1.8`), soft luminescence (`bloomIntensity: 0.35`), and subtle click ripples (`clickSplatAmount: 3`).
+  - Added `intensity` options (`minimal`, `subtle`, `medium`) with default `opacity-55` so monumental typography, project cards, and text maintain maximum readability and zero visual clutter.
+- [x] **Global Window Event Capture & Pointer-Events Ergonomics**:
+  - Enhanced `WebGLFluidPaint.tsx` with `globalEvents: true` mode to capture window-level `mousemove`, `mousedown`, and touch gestures.
+  - Canvas remains `pointer-events-none`, guaranteeing 100% native clickability and focus on buttons, resume links, inputs, and nav links without blocking interaction.
+  - Scaled click burst velocity and color intensity proportionally with bloom and splat force.
+- [x] **Surface Transparency & Glassmorphic Harmony**:
+  - Converted opaque `bg-black` wrappers in `Hero.tsx`, `ScrollSlider.tsx`, `AboutMe.tsx`, `Skills.tsx`, and `Projects.tsx` to `bg-transparent`.
+  - Preserved dynamic inversion with frosted surfaces: `Contact.tsx` (`bg-white/95 backdrop-blur-md text-black`) and `Footer.tsx` (`bg-black/90 backdrop-blur-md text-white`).
+  - Allowed fluid to flow behind About Me's glass card (`backdrop-blur-md`) and stacked project cards (`bg-zinc-950`).
+- [x] **Accessibility & Core Web Vitals (Zero-SEO-Loss)**:
+  - Added `aria-hidden="true"` and `role="presentation"` to background wrapper.
+  - Added `prefers-reduced-motion: reduce` listener to pause simulation on accessibility request.
+  - Deferred canvas mount via `requestAnimationFrame` so initial semantic DOM and fonts paint immediately (optimizing FCP and LCP).
+  - Enriched `layout.tsx` metadata with high-intent keywords: `Creative Developer`, `WebGL Fluid Simulation`, `Interactive Web Developer`, `Ubed Khan Developer`.
+  - Enhanced `src/lib/seo.ts` with `hasOccupation` and `knowsAbout` entries for `WebGL & Shaders` and `Interactive Fluid Simulation`.
+- [x] **Verification**:
+  - `npm run typecheck` (`tsc --noEmit`) -> **0 errors**.
+  - `npm run build` -> **Exit code 0** (all 8 static/dynamic routes compiled cleanly).
+
 ---
 
 ## 3. Directory Map & File Inventory
@@ -128,6 +151,7 @@ ubedkhan/
 │   │   └── api/                           # Backend route handlers (/api/contact)
 │   ├── components/
 │   │   ├── common/                        # MouseFollower, Preloader
+│   │   ├── fluid-paint/                   # WebGLFluidPaint, FluidBackground, presets, types
 │   │   ├── layout/                        # NavBar, Footer, FooterBlinker
 │   │   ├── sections/                      # Hero, ScrollSlider, AboutMe, Skills, Projects, Contact
 │   │   ├── ui/                            # ContactForm, HeroCtaButton, PassionText, ProjectHead
