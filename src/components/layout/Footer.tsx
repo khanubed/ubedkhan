@@ -3,8 +3,8 @@ import FooterBlinker from './FooterBlinker';
 
 export default function Footer() {
   return (
-    <footer className="bg-white" role="contentinfo">
-      <section className="w-screen h-auto relative z-10 py-4 rounded-t-[5%] top-0 max-tablet:h-[63vh] bg-black text-white" aria-labelledby="footer-brand">
+    <footer className="bg-transparent" role="contentinfo">
+      <section className="w-screen h-auto relative z-10 py-4 rounded-t-[5%] top-0 max-tablet:h-[63vh] bg-black/90 backdrop-blur-md text-white" aria-labelledby="footer-brand">
         <div className="mx-24 max-tablet:mx-5 pt-10 flex justify-between">
           <div className="republica tracking-wider text-7xl flex flex-col max-tablet:text-5xl max-phone:text-4xl">
             <h2 id="footer-brand">UBED KHAN</h2>

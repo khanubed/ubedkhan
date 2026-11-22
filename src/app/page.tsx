@@ -9,7 +9,7 @@ import Footer from '@/components/layout/Footer';
 
 export default function HomePage() {
   return (
-    <main className="bg-black w-screen max-tablet:overflow-x-hidden">
+    <main className="bg-transparent w-screen max-tablet:overflow-x-hidden relative z-10">
       <Hero />
       <ScrollSlider />
       <AboutMe />

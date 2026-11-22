@@ -8,7 +8,7 @@ export default function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="bg-black text-white relative min-h-screen flex flex-col items-center justify-between overflow-hidden"
+      className="bg-transparent text-white relative min-h-screen flex flex-col items-center justify-between overflow-hidden"
     >
       {/* ---------------- HEADING (Server Rendered for SEO) ---------------- */}
       <header className="absolute max-tablet:top-[10%] top-16 w-full flex justify-center select-none max-phone:top-[10%] z-20">

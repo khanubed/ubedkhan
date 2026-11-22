@@ -137,11 +137,11 @@ export default function Skills() {
       id="skills"
       ref={containerRef}
       aria-label="Technical Skills"
-      className="relative w-full bg-black"
+      className="relative w-full bg-transparent"
     >
       <div
         ref={pinRef}
-        className="relative w-screen h-screen bg-black text-white overflow-hidden flex flex-col items-center justify-between pt-24 phone:pt-28 tablet:pt-32 pb-10 px-4"
+        className="relative w-screen h-screen bg-transparent text-white overflow-hidden flex flex-col items-center justify-between pt-24 phone:pt-28 tablet:pt-32 pb-10 px-4"
       >
         {/* Corner Decorative Elements */}
         <div

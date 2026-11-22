@@ -1,11 +1,17 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import MouseFollower from '@/components/common/MouseFollower';
 import NavBar from '@/components/layout/NavBar';
+import { FluidBackground } from '@/components/fluid-paint';
 import { getPersonSchema, getWebSiteSchema } from '@/lib/seo';
 import './globals.css';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ubed.in';
+
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  colorScheme: 'dark',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -14,9 +20,14 @@ export const metadata: Metadata = {
     template: '%s | Ubed Khan',
   },
   description:
-    'Portfolio of Ubed Khan — Full-Stack Developer specializing in Next.js, React, Node.js, and high-impact typography and motion design.',
+    'Portfolio of Ubed Khan — Full-Stack Developer & Creative Technologist specializing in Next.js 16, WebGL fluid shaders, React, Node.js, and high-impact typography.',
   keywords: [
     'Ubed Khan',
+    'Ubed Khan Developer',
+    'Ubed Khan Portfolio',
+    'ubed.in',
+    'Creative Developer',
+    'WebGL Fluid Simulation',
     'Full-Stack Developer',
     'Next.js 16 Developer',
     'UI/UX Designer',
@@ -24,11 +35,12 @@ export const metadata: Metadata = {
     'React Developer India',
     'GSAP Animation Specialist',
     'MERN Stack Developer',
-    'Web Development Portfolio',
+    'Creative Engineering Portfolio',
   ],
   authors: [{ name: 'Ubed Khan', url: siteUrl }],
   creator: 'Ubed Khan',
   publisher: 'Ubed Khan',
+  category: 'technology',
   alternates: {
     canonical: siteUrl,
   },
@@ -38,7 +50,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: 'Ubed Khan | Full-Stack Developer & UI/UX Designer',
     description:
-      'Explore projects, interactive animations, and technical articles by Ubed Khan.',
+      'Explore projects, WebGL fluid simulations, interactive typography, and technical articles by Ubed Khan.',
     siteName: 'Ubed Khan Portfolio',
     images: [
       {
@@ -52,12 +64,19 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Ubed Khan | Full-Stack Developer & UI/UX Designer',
-    description: 'Explore projects and creative development work by Ubed Khan.',
+    description: 'Explore projects and creative engineering work by Ubed Khan.',
     images: ['/images/elements/bitmoji.webp'],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
     icon: '/bitmoji.webp',
@@ -86,10 +105,12 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-black text-white antialiased selection:bg-indigo-600 selection:text-white">
+        {/* Subtle, non-distracting WebGL fluid simulation background */}
+        <FluidBackground intensity="subtle" />
         <SmoothScrollProvider>
           <MouseFollower />
           <NavBar />
-          <main id="main-content">{children}</main>
+          <div id="site-wrapper" className="relative z-10">{children}</div>
         </SmoothScrollProvider>
       </body>
     </html>

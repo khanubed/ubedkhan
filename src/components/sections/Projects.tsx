@@ -92,11 +92,11 @@ export default function Projects() {
       id="projects"
       ref={sectionRef}
       aria-label="Featured Projects"
-      className="relative w-full bg-black"
+      className="relative w-full bg-transparent"
     >
       <div
         ref={pinWrapperRef}
-        className="relative w-screen min-h-screen bg-black text-white overflow-hidden flex flex-col justify-between pt-14 pb-8"
+        className="relative w-screen min-h-screen bg-transparent text-white overflow-hidden flex flex-col justify-between pt-14 pb-8"
       >
       {/* Header Marquee Banner */}
       <div className="w-full relative z-10 -mt-2">

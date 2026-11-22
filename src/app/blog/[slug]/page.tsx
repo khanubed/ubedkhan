@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const jsonLd = getBlogPostSchema(post);
 
   return (
-    <article className="min-h-screen bg-black text-white pt-32 pb-24 px-4 sm:px-8 max-w-4xl mx-auto">
+    <article className="min-h-screen bg-transparent text-white pt-32 pb-24 px-4 sm:px-8 max-w-4xl mx-auto">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
