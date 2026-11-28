@@ -114,6 +114,16 @@
   - `npm run typecheck` (`tsc --noEmit`) -> **0 errors**.
   - `npm run build` -> **Exit code 0** (all 8 static/dynamic routes compiled cleanly).
 
+### Fix: Permanent Domain Redirects (`*.vercel.app` -> `ubed.in`) & Route Canonicals (2026-11-28)
+- [x] **Permanent Redirects in `next.config.ts`**:
+  - Added production-only (`VERCEL_ENV === 'production'`) permanent redirects (`308`) for any `*.vercel.app` host and `www.ubed.in` to `https://ubed.in/:path*` so search engines transfer ranking authority from the old `vercel.app` domain to `ubed.in`.
+- [x] **Route-Specific Canonicals**:
+  - Updated `src/app/layout.tsx` `alternates.canonical` to `./` (relative to `metadataBase: https://ubed.in`).
+  - Added explicit `alternates.canonical` to `src/app/blog/page.tsx` (`/blog`) and `src/app/blog/[slug]/page.tsx` (`/blog/[slug]`).
+- [x] **Verification**:
+  - `npm run typecheck` (`tsc --noEmit`) -> **0 errors**.
+  - `npm run build` -> **Exit code 0** (all 8 routes compiled cleanly).
+
 ---
 
 ## 3. Directory Map & File Inventory
