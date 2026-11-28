@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: 'Blog & Engineering Notes',
   description:
     'Technical articles, architectural insights, and frontend experiments written by Ubed Khan.',
+  alternates: {
+    canonical: '/blog',
+  },
 };
 
 export default function BlogListingPage() {

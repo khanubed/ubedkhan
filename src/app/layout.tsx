@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   publisher: 'Ubed Khan',
   category: 'technology',
   alternates: {
-    canonical: siteUrl,
+    canonical: './',
   },
   openGraph: {
     type: 'website',
